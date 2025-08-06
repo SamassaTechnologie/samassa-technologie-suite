@@ -1,196 +1,219 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Reçu de Paiement Modifiable A4</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fff;
-      padding: 20px;
-      margin: auto;
-      max-width: 700px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .company-info {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .company-info div {
-      font-weight: normal;
-    }
-    hr {
-      margin: 20px 0;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #888;
-      padding: 8px;
-      text-align: center;
-    }
-    input[type="text"], input[type="number"], input[type="date"] {
-      width: 100%;
-      font-size: 16px;
-      padding: 5px;
-      box-sizing: border-box;
-    }
-    .total {
-      text-align: right;
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-    .mode-paiement {
-      margin-top: 10px;
-      font-style: italic;
-    }
-    .signature {
-      margin-top: 40px;
-      text-align: center;
-    }
-    .remerciement {
-      margin-top: 30px;
-      text-align: center;
-      color: #007bff;
-      font-weight: bold;
-      font-style: italic;
-    }
-    .print-btn {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .print-btn button {
-      padding: 10px 20px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    @media print {
-      @page {
-        size: A4;
-        margin: 20mm;
-      }
-      .print-btn {
-        display: none;
-      }
-      input {
-        border: none;
-      }
-      body {
-        width: 210mm;
-        height: 297mm;
-        overflow: hidden;
-        page-break-after: avoid;
-        margin: 0;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçu de Paiement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .company-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        .details-list {
+            margin-bottom: 20px;
+        }
+        .details-list p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .details-list span {
+            font-weight: normal;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total-amount {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .total-amount h3 {
+            font-size: 20px;
+            margin: 0;
+        }
+        .payment-mode {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .signature {
+            text-align: center;
+            margin-top: 50px;
+            font-style: italic;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Reçu de Paiement</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Reçu de Paiement</h1>
+        </div>
 
-  <div class="company-info">
-    SAMASSA TECHNOLOGIE<br>
-    TOUT POUR INFORMATIQUE
-    <div>Tél : 77291931 / 62970630</div>
-    <div>Email : boussesamassa10@gmail.com</div>
-    <div>Adresse : Grand Marché de Kayes, près du premier Arrondissement de la Police</div>
-  </div>
+        <div class="company-info">
+            <p style="font-weight: bold;">SAMASSA TECHNOLOGIE</p>
+            <p>TOUT POUR INFORMATIQUE</p>
+            <p>Tél : <span id="company-phone">77291931 / 62970630</span></p>
+            <p>Email : <span id="company-email">boussesamassa10@gmail.com</span></p>
+            <p>Adresse : <span id="company-address">Grand Marché de Kayes, près du premier Arrondissement de la Police</span></p>
+        </div>
 
-  <hr>
+        <div class="section-title">Détails du Reçu</div>
+        <div class="details-list">
+            <p>Numéro de Reçu : <span id="receipt-number">08</span></p>
+            <p>Date : <span id="receipt-date">2025-07-30</span></p>
+        </div>
 
-  <div class="section">
-    <h2>Détails du Reçu</h2>
-    <p>Numéro de Reçu : <input type="text" value="009"></p>
-    <p>Date : <input type="date" value="2025-08-02"></p>
-  </div>
+        <div class="section-title">Informations du Client</div>
+        <div class="details-list">
+            <p>Nom du Client : <span id="client-last-name">SAMASSA</span></p>
+            <p>Prénom du Client : <span id="client-first-name">Boussé</span></p>
+            <p>Numéro NINA : <span id="client-nina">197CI901041009A</span></p>
+        </div>
 
-  <div class="section">
-    <h2>Informations du Client</h2>
-    <p>Nom du Client : <input type="text" value="SAMASSA"></p>
-    <p>Prénom du Client : <input type="text" value="Bousse"></p>
-    <p>Numéro NINA : <input type="text" value="197CI901041009A"></p>
-  </div>
+        <div class="section-title">Détails de la Transaction</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Qté</th>
+                    <th>Prix Unit.</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="transaction-items">
+                <tr>
+                    <td><span class="item-description">Scan Carte NINA</span></td>
+                    <td><span class="item-quantity">1</span></td>
+                    <td><span class="item-unit-price">3000 F</span></td>
+                    <td><span class="item-total">3000 F</span></td>
+                </tr>
+                </tbody>
+        </table>
 
-  <div class="section">
-    <h2>Détails de la Transaction</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Qté</th>
-          <th>Prix Unit.</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" value="Scan Carte NINA"></td>
-          <td><input type="number" value="1" class="qte"></td>
-          <td><input type="number" value="3000" class="pu"></td>
-          <td class="total">3000 F</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <div class="total-amount">
+            <h3>Montant Total Général : <span id="grand-total">3000 F</span></h3>
+        </div>
 
-  <div class="total">
-    Montant Total Général : <span id="montant-total">3000</span> F
-  </div>
+        <div class="payment-mode">
+            <p>Mode de Paiement : <span id="payment-method">Mobile Money</span></p>
+        </div>
 
-  <div class="mode-paiement">
-    Mode de Paiement : <input type="text" value="Espèces">
-  </div>
+        <div class="signature">
+            <p>Signature</p>
+        </div>
 
-  <div class="signature">
-    <p>Signature</p><br><br>
-  </div>
+        <div class="footer">
+            <p>Merci pour votre confiance !</p>
+        </div>
 
-  <div class="remerciement">
-    Merci pour votre confiance !
-  </div>
+    </div>
 
-  <div class="print-btn">
-    <button onclick="window.print()">🖨️ Imprimer le reçu</button>
-  </div>
+    <script>
+        // Fonction pour modifier les informations du reçu
+        function updateReceipt(data) {
+            document.getElementById('company-phone').innerText = data.companyPhone;
+            document.getElementById('company-email').innerText = data.companyEmail;
+            document.getElementById('company-address').innerText = data.companyAddress;
+            document.getElementById('receipt-number').innerText = data.receiptNumber;
+            document.getElementById('receipt-date').innerText = data.receiptDate;
+            document.getElementById('client-last-name').innerText = data.clientLastName;
+            document.getElementById('client-first-name').innerText = data.clientFirstName;
+            document.getElementById('client-nina').innerText = data.clientNina;
+            document.getElementById('payment-method').innerText = data.paymentMethod;
+            document.getElementById('grand-total').innerText = data.grandTotal;
 
-  <script>
-    function calculeTotal() {
-      const qte = parseFloat(document.querySelector('.qte').value) || 0;
-      const pu = parseFloat(document.querySelector('.pu').value) || 0;
-      const total = qte * pu;
-      document.querySelector('.total').textContent = total + " F";
-      document.getElementById('montant-total').textContent = total;
-    }
+            // Mettre à jour les articles de la transaction
+            const transactionItems = document.getElementById('transaction-items');
+            transactionItems.innerHTML = ''; // Effacer les anciens articles
 
-    document.querySelectorAll('.qte, .pu').forEach(el => {
-      el.addEventListener('input', calculeTotal);
-    });
+            data.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="item-description">${item.description}</span></td>
+                    <td><span class="item-quantity">${item.quantity}</span></td>
+                    <td><span class="item-unit-price">${item.unitPrice} F</span></td>
+                    <td><span class="item-total">${item.total} F</span></td>
+                `;
+                transactionItems.appendChild(row);
+            });
+        }
 
-    calculeTotal();
-  </script>
+        // Exemple d'utilisation pour modifier les données
+        // Vous pouvez appeler cette fonction avec de nouvelles données
+        const newReceiptData = {
+            companyPhone: "77291931 / 62970630",
+            companyEmail: "boussesamassa10@gmail.com",
+            companyAddress: "Grand Marché de Kayes, près du premier Arrondissement de la Police",
+            receiptNumber: "09",
+            receiptDate: "2025-08-01",
+            clientLastName: "DIARRA",
+            clientFirstName: "Moussa",
+            clientNina: "197CI901041009B",
+            paymentMethod: "Espèces",
+            grandTotal: "5000 F",
+            items: [
+                { description: "Photocopie A4", quantity: 10, unitPrice: 50, total: 500 },
+                { description: "Impression couleur", quantity: 2, unitPrice: 200, total: 400 },
+                { description: "Scan Carte NINA", quantity: 1, unitPrice: 3000, total: 3000 }
+            ]
+        };
+
+        // Pour utiliser les nouvelles données, décommentez la ligne ci-dessous
+        // updateReceipt(newReceiptData);
+    </script>
 
 </body>
 </html>

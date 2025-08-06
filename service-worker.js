@@ -1,0 +1,1 @@
+// Service worker PWA - à compléter pour mise en cache des pages

@@ -1,0 +1,7 @@
+
+body { font-family: Arial, sans-serif; font-weight: bold; padding: 20px; margin: 0; }
+h1 { text-align: center; }
+footer { margin-top: 50px; font-size: 0.9em; text-align: center; background: #eee; padding: 10px; }
+ul { list-style: none; padding: 0; text-align: center; }
+ul li { margin: 10px 0; }
+a { text-decoration: none; color: blue; font-size: 1.2em; }

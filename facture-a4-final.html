@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Facture - Samassa Technologie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      font-size: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    header, footer {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      text-transform: uppercase;
+      margin: 30px 0;
+    }
+    .info, .totaux {
+      margin: 30px 0;
+    }
+    .info div {
+      margin-bottom: 8px;
+    }
+    input {
+      font-size: 16px;
+      border: none;
+      border-bottom: 1px solid #aaa;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 10px;
+      text-align: center;
+      font-size: 16px;
+    }
+    .signature {
+      margin-top: 80px;
+      text-align: right;
+      padding-right: 50px;
+      font-weight: bold;
+    }
+    .print-btn {
+      margin: 30px 0;
+      text-align: center;
+    }
+    .print-btn button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .footer-coord {
+      margin-top: 80px;
+      font-size: 0.95em;
+      text-align: center;
+      color: #444;
+    }
+    @media print {
+      .print-btn { display: none; }
+      input { border: none; }
+      input:read-only {
+        border: none !important;
+        outline: none !important;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: none;
+        font-family: inherit;
+        font-size: 16px;
+      }
+      input::placeholder {
+        color: black;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>SAMASSA TECHNOLOGIE</h2>
+  <div>Tout pour l'informatique</div>
+  <div>Grand Marché de Kayes, près du 1er arrondissement de la police</div>
+  <div>Rue Soundiata Keita</div>
+  <div>Tel: 00223 77291931 – Email: samassatechnologie10@gmail.com</div>
+</header>
+
+<h1>FACTURE</h1>
+
+<div class="info">
+  <div>Facture N° : <input type="text" value="008"></div>
+  <div>Date : <input type="date" value="2025-07-30"></div>
+  <div>Client : <input type="text" value="DIABA DIAB MULTI-SERVICE" style="width: 300px;"></div>
+</div>
+
+<table id="table-facture">
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Quantité</th>
+      <th>Prix Unitaire</th>
+      <th>Total HT</th>
+      <th>Remarques</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input type="text" value="Activation de Microsoft Office 2019" style="width: 100%;"></td>
+      <td><input type="number" value="1" class="qte" style="width: 70px;"></td>
+      <td><input type="number" value="2000" class="pu" style="width: 90px;"></td>
+      <td class="total-ht">2000 F</td>
+      <td><input type="text" style="width: 100%;"></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="print-btn">
+  <button onclick="window.print()">🖨️ Imprimer la facture</button>
+</div>
+
+<div class="totaux">
+  <div>Total HT : <span id="total-ht">2000</span> FCFA</div>
+  <div>TVA : <input type="number" id="tva" value="0"> FCFA</div>
+  <div>Total TTC : <span id="total-ttc">2000</span> FCFA</div>
+</div>
+
+<div class="signature">
+  Le Gérant<br>
+  Boussé SAMASSA
+</div>
+
+<footer class="footer-coord">
+  Merci pour votre confiance !<br>
+  Samassa Technologie – Tout pour l’informatique – Grand Marché de Kayes, près du 1er arrondissement de la police, Rue Soundiata Keita – 00223 77291931 – samassatechnologie10@gmail.com
+</footer>
+
+<script>
+function calculeFacture() {
+  let totalHT = 0;
+  const lignes = document.querySelectorAll('#table-facture tbody tr');
+  lignes.forEach(ligne => {
+    const qte = parseFloat(ligne.querySelector('.qte').value) || 0;
+    const pu = parseFloat(ligne.querySelector('.pu').value) || 0;
+    const total = qte * pu;
+    ligne.querySelector('.total-ht').textContent = total + ' F';
+    totalHT += total;
+  });
+  document.getElementById('total-ht').textContent = totalHT;
+  const tva = parseFloat(document.getElementById('tva').value) || 0;
+  document.getElementById('total-ttc').textContent = totalHT + tva;
+}
+
+document.querySelectorAll('.qte, .pu, #tva').forEach(input => {
+  input.addEventListener('input', calculeFacture);
+});
+
+calculeFacture();
+</script>
+
+</body>
+</html>

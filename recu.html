@@ -1,253 +1,36 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reçu de Paiement Modifiable</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-        .company-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .company-info p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-        .details-list p, .details-list div {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .details-list label {
-            font-weight: bold;
-            display: inline-block;
-            width: 150px;
-        }
-        input[type="text"], input[type="date"], input[type="number"] {
-            border: 1px solid #ccc;
-            padding: 4px;
-            font-size: 14px;
-            width: calc(100% - 160px);
-            margin-bottom: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .editable-cell input {
-            width: 90%;
-            border: none;
-            padding: 0;
-            margin: 0;
-            background: transparent;
-        }
-        .total-amount {
-            text-align: right;
-            margin-top: 20px;
-        }
-        .total-amount h3 {
-            font-size: 20px;
-            margin: 0;
-        }
-        .payment-mode {
-            text-align: right;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        .signature {
-            text-align: center;
-            margin-top: 50px;
-            font-style: italic;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        .add-row-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        .delete-row-btn {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
+Mode Édition
+Imprimer
+Reçu de Paiement
+SAMASSA TECHNOLOGIE
+TOUT POUR INFORMATIQUE
+Tél : 77291931 / 62970630
+Email : boussesamassa10@gmail.com
+Adresse : Grand Marché de Kayes, près du
+premier Arrondissement de la Police
 
-    <div class="container">
-        <div class="header">
-            <h1>Reçu de Paiement</h1>
-        </div>
+Détails du Reçu
+Numéro de Reçu :
+08
+Date :
+2025-07-30
+Informations du Client
+Nom du Client :
+SAMASSA
+Prénom du Client :
+Boussé
+Numéro NINA :
+197CI901041009A
+Détails de la Transaction
+Description
+Qté
+Prix Unit.
+Total
+Scan Carte NINA
+1
+3000 F
+3000 F
+Montant Total Général : 3000 F
+Mode de Paiement : Mobile Money
 
-        <div class="company-info">
-            <p style="font-weight: bold;"><input type="text" value="SAMASSA TECHNOLOGIE" style="text-align: center; font-weight: bold;"></p>
-            <p><input type="text" value="TOUT POUR INFORMATIQUE" style="text-align: center;"></p>
-            <p>Tél : <input type="text" value="77291931 / 62970630"></p>
-            <p>Email : <input type="text" value="boussesamassa10@gmail.com"></p>
-            <p>Adresse : <input type="text" value="Grand Marché de Kayes, près du premier Arrondissement de la Police"></p>
-        </div>
-
-        <div class="section-title">Détails du Reçu</div>
-        <div class="details-list">
-            <p>Numéro de Reçu : <input type="text" id="receipt-number" value="08"></p>
-            <p>Date : <input type="date" id="receipt-date" value="2025-07-30"></p>
-        </div>
-
-        <div class="section-title">Informations du Client</div>
-        <div class="details-list">
-            <p>Nom du Client : <input type="text" id="client-last-name" value="SAMASSA"></p>
-            <p>Prénom du Client : <input type="text" id="client-first-name" value="Boussé"></p>
-            <p>Numéro NINA : <input type="text" id="client-nina" value="197CI901041009A"></p>
-        </div>
-
-        <div class="section-title">Détails de la Transaction</div>
-        <table id="transaction-table">
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th>Qté</th>
-                    <th>Prix Unit.</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="transaction-items">
-                <tr>
-                    <td class="editable-cell"><input type="text" value="Scan Carte NINA" class="item-description"></td>
-                    <td class="editable-cell"><input type="number" value="1" class="item-quantity" oninput="calculateTotal()"></td>
-                    <td class="editable-cell"><input type="number" value="3000" class="item-unit-price" oninput="calculateTotal()"> F</td>
-                    <td class="item-total">3000 F</td>
-                    <td><button class="delete-row-btn" onclick="deleteRow(this)">X</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <button class="add-row-btn" onclick="addRow()">Ajouter une ligne</button>
-
-        <div class="total-amount">
-            <h3>Montant Total Général : <span id="grand-total">3000 F</span></h3>
-        </div>
-
-        <div class="payment-mode">
-            <p>Mode de Paiement : <input type="text" id="payment-method" value="Mobile Money" style="text-align: right;"></p>
-        </div>
-
-        <div class="signature">
-            <p>Signature</p>
-        </div>
-
-        <div class="footer">
-            <p>Merci pour votre confiance !</p>
-        </div>
-
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mettre à jour la date par défaut avec la date du jour
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('receipt-date').value = today;
-
-            // Mettre à jour le total quand on change les valeurs
-            const inputs = document.querySelectorAll('.item-quantity, .item-unit-price');
-            inputs.forEach(input => {
-                input.addEventListener('input', calculateTotal);
-            });
-        });
-
-        // Fonction pour calculer le total d'une ligne et le total général
-        function calculateTotal() {
-            const rows = document.querySelectorAll('#transaction-items tr');
-            let grandTotal = 0;
-
-            rows.forEach(row => {
-                const quantity = row.querySelector('.item-quantity').value;
-                const unitPrice = row.querySelector('.item-unit-price').value;
-                const totalCell = row.querySelector('.item-total');
-
-                const total = parseFloat(quantity) * parseFloat(unitPrice);
-                totalCell.innerText = `${total.toLocaleString()} F`;
-                grandTotal += total;
-            });
-
-            document.getElementById('grand-total').innerText = `${grandTotal.toLocaleString()} F`;
-        }
-
-        // Fonction pour ajouter une nouvelle ligne au tableau
-        function addRow() {
-            const tableBody = document.getElementById('transaction-items');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="editable-cell"><input type="text" value="" class="item-description"></td>
-                <td class="editable-cell"><input type="number" value="0" class="item-quantity" oninput="calculateTotal()"></td>
-                <td class="editable-cell"><input type="number" value="0" class="item-unit-price" oninput="calculateTotal()"> F</td>
-                <td class="item-total">0 F</td>
-                <td><button class="delete-row-btn" onclick="deleteRow(this)">X</button></td>
-            `;
-            tableBody.appendChild(newRow);
-        }
-
-        // Fonction pour supprimer une ligne du tableau
-        function deleteRow(button) {
-            const row = button.parentNode.parentNode;
-            row.remove();
-            calculateTotal(); // Recalculer le total après la suppression
-        }
-
-        // Calculer le total initial
-        calculateTotal();
-    </script>
-
-</body>
-</html>
+Signature
+Merci pour votre confiance !

@@ -1,36 +1,184 @@
-Mode Édition
-Imprimer
-Reçu de Paiement
-SAMASSA TECHNOLOGIE
-TOUT POUR INFORMATIQUE
-Tél : 77291931 / 62970630
-Email : boussesamassa10@gmail.com
-Adresse : Grand Marché de Kayes, près du
-premier Arrondissement de la Police
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reçu de Paiement</title>
+  <style>
+    body {
+      background: #f3f3f3;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .receipt-container {
+      background: #fff;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 24px 18px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.6em;
+      margin: 0 0 16px;
+      font-weight: bold;
+    }
+    .company {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 4px;
+    }
+    .company-sub {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 2px;
+      font-size: 1.05em;
+    }
+    .contact-info {
+      text-align: center;
+      font-size: 0.97em;
+      margin-bottom: 7px;
+      line-height: 1.5em;
+    }
+    hr {
+      margin: 18px 0 12px 0;
+      border: none;
+      border-top: 1px solid #ddd;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 8px;
+      font-size: 1.07em;
+    }
+    .details, .client-info {
+      margin-bottom: 8px;
+      font-size: 0.98em;
+    }
+    .details span, .client-info span {
+      font-weight: bold;
+    }
+    .transaction-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+    .transaction-table th, .transaction-table td {
+      border: 1px solid #d0d0d0;
+      padding: 6px 8px;
+      text-align: left;
+      font-size: 0.95em;
+    }
+    .transaction-table th {
+      background: #efefef;
+      font-weight: bold;
+      text-align: left;
+    }
+    .total-section {
+      text-align: center;
+      font-size: 1.15em;
+      font-weight: bold;
+      margin: 14px 0 6px 0;
+    }
+    .payment-mode {
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 1em;
+    }
+    .signature-section {
+      text-align: center;
+      margin: 18px 0 0 0;
+      font-size: 1em;
+    }
+    .thanks {
+      color: #1877f2;
+      font-weight: bold;
+      font-size: 1.08em;
+      text-align: center;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
 
-Détails du Reçu
-Numéro de Reçu :
-08
-Date :
-2025-07-30
-Informations du Client
-Nom du Client :
-SAMASSA
-Prénom du Client :
-Boussé
-Numéro NINA :
-197CI901041009A
-Détails de la Transaction
-Description
-Qté
-Prix Unit.
-Total
-Scan Carte NINA
-1
-3000 F
-3000 F
-Montant Total Général : 3000 F
-Mode de Paiement : Mobile Money
-
-Signature
-Merci pour votre confiance !
+    /* Impression */
+    @media print {
+      body {
+        background: #fff;
+      }
+      .receipt-container {
+        box-shadow: none;
+        max-width: none;
+        border-radius: 0;
+        padding: 0;
+      }
+    }
+    /* Champs modifiables */
+    [contenteditable] {
+      outline: 1px dashed #aaa;
+      border-radius: 3px;
+      min-width: 30px;
+      min-height: 18px;
+      padding: 2px 3px;
+    }
+    [contenteditable]:focus {
+      outline: 2px solid #1877f2;
+      background: #e9f3fe;
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-container">
+    <h1>Reçu de Paiement</h1>
+    <div class="company" contenteditable="true">SAMASSA TECHNOLOGIE</div>
+    <div class="company-sub" contenteditable="true">TOUT POUR INFORMATIQUE</div>
+    <div class="contact-info">
+      Tél : <span contenteditable="true">77291931 / 62970630</span><br>
+      Email : <span contenteditable="true">boussesamassa10@gmail.com</span><br>
+      Adresse : <span contenteditable="true">Grand Marché de Kayes, près du premier Arrondissement de la Police</span>
+    </div>
+    <hr>
+    <div class="section-title">Détails du Reçu</div>
+    <div class="details">
+      Numéro de Reçu : <span contenteditable="true">08</span><br>
+      Date : <span contenteditable="true">2025-07-30</span>
+    </div>
+    <div class="section-title">Informations du Client</div>
+    <div class="client-info">
+      Nom du Client : <span contenteditable="true">SAMASSA</span><br>
+      Prénom du Client : <span contenteditable="true">Boussé</span><br>
+      Numéro NINA : <span contenteditable="true">197CI901041009A</span>
+    </div>
+    <div class="section-title">Détails de la Transaction</div>
+    <table class="transaction-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Qté</th>
+          <th>Prix Unit.</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true">Scan Carte NINA</td>
+          <td contenteditable="true">1</td>
+          <td contenteditable="true">3000 F</td>
+          <td contenteditable="true">3000 F</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="total-section">
+      Montant Total Général : <span contenteditable="true">3000 F</span>
+    </div>
+    <div class="payment-mode">
+      Mode de Paiement : <span contenteditable="true">Mobile Money</span>
+    </div>
+    <hr>
+    <div class="signature-section">
+      Signature <br><br>
+    </div>
+    <p class="thanks"><span contenteditable="true">Merci pour votre confiance !</span></p>
+  </div>
+</body>
+</html>

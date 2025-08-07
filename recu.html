@@ -100,11 +100,30 @@
       margin-top: 12px;
       margin-bottom: 0;
     }
-
-    /* Impression */
+    .print-btn {
+      display: block;
+      width: 100%;
+      max-width: 160px;
+      margin: 20px auto 0 auto;
+      padding: 8px 0;
+      font-size: 1em;
+      background: #1877f2;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background .2s;
+    }
+    .print-btn:hover {
+      background: #135bb0;
+    }
     @media print {
       body {
         background: #fff;
+      }
+      .print-btn {
+        display: none !important;
       }
       .receipt-container {
         box-shadow: none;
@@ -128,7 +147,7 @@
   </style>
 </head>
 <body>
-  <div class="receipt-container">
+  <div class="receipt-container" id="receipt">
     <h1>Reçu de Paiement</h1>
     <div class="company" contenteditable="true">SAMASSA TECHNOLOGIE</div>
     <div class="company-sub" contenteditable="true">TOUT POUR INFORMATIQUE</div>
@@ -141,7 +160,7 @@
     <div class="section-title">Détails du Reçu</div>
     <div class="details">
       Numéro de Reçu : <span contenteditable="true">08</span><br>
-      Date : <span contenteditable="true">2025-07-30</span>
+      Date : <span contenteditable="true">2025-08-07</span>
     </div>
     <div class="section-title">Informations du Client</div>
     <div class="client-info">
@@ -180,5 +199,6 @@
     </div>
     <p class="thanks"><span contenteditable="true">Merci pour votre confiance !</span></p>
   </div>
+  <button class="print-btn" onclick="window.print()">Imprimer</button>
 </body>
 </html>

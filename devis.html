@@ -1,1 +1,576 @@
-<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>Devis</title></head><body><h1>Générateur de Devis</h1></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devis - Samassa Technologie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            padding: 20px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .form-section h2 {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="number"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #2c5aa0;
+            outline: none;
+        }
+        
+        .btn {
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #1e3f73;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 2fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        /* Filigrane */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .watermark img {
+            width: 400px;
+            height: auto;
+        }
+        
+        /* Styles pour l'impression */
+        .quote {
+            display: none;
+            background: white;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote.show {
+            display: block;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .company-tagline {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .company-address {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .separator {
+            border: none;
+            border-top: 2px solid #333;
+            margin: 30px 0;
+        }
+        
+        .quote-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 30px;
+        }
+        
+        .quote-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .quote-meta div {
+            font-weight: bold;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .items-table th,
+        .items-table td {
+            border: 2px solid #333;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .items-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .items-table td:first-child {
+            text-align: left;
+        }
+        
+        .totals {
+            text-align: right;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .totals div {
+            margin-bottom: 5px;
+        }
+        
+        .validity {
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .signature {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .signature-title {
+            text-decoration: underline;
+            font-style: italic;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .signature-image {
+            max-width: 200px;
+            height: auto;
+            margin: 20px 0;
+        }
+        
+        .signature-name {
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .thank-you {
+            text-align: center;
+            font-style: italic;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* Media queries pour l'impression */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container, .form-section {
+                display: none;
+            }
+            
+            .quote {
+                display: block !important;
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .item-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .quote-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .items-table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">
+        <img src="watermark.png" alt="Watermark">
+    </div>
+    <div class="container">
+        <!-- Formulaire de saisie -->
+        <div class="form-section">
+            <h2>📋 Informations du devis</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="quoteNumber">Numéro de devis :</label>
+                    <input type="text" id="quoteNumber" value="001" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quoteDate">Date :</label>
+                    <input type="date" id="quoteDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="validityDate">Validité jusqu'au :</label>
+                    <input type="date" id="validityDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientName">Nom du client :</label>
+                    <input type="text" id="clientName" value="" required>
+                </div>
+            </div>
+            
+            <h2>🏢 Informations de l'entreprise</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="companyName">Nom de l'entreprise :</label>
+                    <input type="text" id="companyName" value="SAMASSA TECHNOLOGIE">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyTagline">Slogan :</label>
+                    <input type="text" id="companyTagline" value="Tout pour l'informatique">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyAddress">Adresse :</label>
+                    <textarea id="companyAddress" rows="3">Grand Marché de Kayes, près du 1er arrondissement de la police
+Rue Soundiata Keita</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyPhone">Téléphone :</label>
+                    <input type="text" id="companyPhone" value="00223 77291931">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyEmail">Email :</label>
+                    <input type="text" id="companyEmail" value="samassatechnologie10@gmail.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="managerName">Nom du gérant :</label>
+                    <input type="text" id="managerName" value="Boussé SAMASSA">
+                </div>
+            </div>
+            
+            <h2>🛍️ Services</h2>
+            
+            <div id="itemsContainer">
+                <div class="item-row">
+                    <input type="text" placeholder="Description du service" value="">
+                    <input type="number" placeholder="Quantité" value="1" min="1">
+                    <input type="number" placeholder="Prix unitaire" value="0" min="0" step="0.01">
+                    <input type="number" placeholder="Total HT" readonly>
+                    <input type="text" placeholder="Remarques" value="">
+                    <button type="button" class="remove-btn" onclick="removeItem(this)">❌</button>
+                </div>
+            </div>
+            
+            <button type="button" class="btn" onclick="addItem()">➕ Ajouter un service</button>
+            
+            <div style="margin-top: 20px;">
+                <button type="button" class="btn btn-success" onclick="generateQuote()">📄 Générer le devis</button>
+                <button type="button" class="btn" onclick="printQuote()">🖨️ Imprimer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Devis généré -->
+    <div class="quote" id="generatedQuote">
+        <div class="header">
+            <div class="company-info">
+                <div class="company-name" id="displayCompanyName">SAMASSA TECHNOLOGIE</div>
+                <div class="company-tagline" id="displayCompanyTagline">Tout pour l'informatique</div>
+                <div class="company-address">
+                    <div id="displayCompanyAddress">Grand Marché de Kayes, près du 1er arrondissement de la police<br>Rue Soundiata Keita</div>
+                    <div>Tel: <span id="displayCompanyPhone">00223 77291931</span></div>
+                    <div>Email: <span id="displayCompanyEmail">samassatechnologie10@gmail.com</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="separator">
+        
+        <div class="quote-title">DEVIS</div>
+        
+        <div class="quote-meta">
+            <div>Devis N° : <span id="displayQuoteNumber">001</span></div>
+            <div>Date : <span id="displayQuoteDate">30/07/2025</span></div>
+            <div>Client : <span id="displayClientName">Client</span></div>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Total HT</th>
+                    <th>Remarques</th>
+                </tr>
+            </thead>
+            <tbody id="displayItemsTable">
+                <tr>
+                    <td>Service</td>
+                    <td>1</td>
+                    <td>0 F</td>
+                    <td>0 F</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="totals">
+            <div>Total HT: <span id="displayTotalHT">0 FCFA</span></div>
+            <div>TVA (18%): <span id="displayTVA">0 FCFA</span></div>
+            <div>Total TTC: <span id="displayTotalTTC">0 FCFA</span></div>
+        </div>
+        
+        <div class="validity">
+            Validité du devis : jusqu'au <span id="displayValidityDate">30/07/2025</span>
+        </div>
+        
+        <div class="signature">
+            <div class="signature-title">Le Gérant</div>
+            <img src="signature.png" alt="Signature" class="signature-image">
+            <div class="signature-name" id="displayManagerName">Boussé SAMASSA</div>
+        </div>
+        
+        <div class="thank-you">Merci pour votre confiance!</div>
+    </div>
+
+    <script>
+        // Initialiser la date d'aujourd'hui
+        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+        
+        // Initialiser la date de validité (30 jours après)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 30);
+        document.getElementById('validityDate').value = tomorrow.toISOString().split('T')[0];
+        
+        // Fonction pour ajouter un nouvel article
+        function addItem() {
+            const container = document.getElementById('itemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'item-row';
+            newItem.innerHTML = `
+                <input type="text" placeholder="Description du service">
+                <input type="number" placeholder="Quantité" value="1" min="1">
+                <input type="number" placeholder="Prix unitaire" value="0" min="0" step="0.01">
+                <input type="number" placeholder="Total HT" readonly>
+                <input type="text" placeholder="Remarques">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">❌</button>
+            `;
+            container.appendChild(newItem);
+            updateTotals();
+        }
+        
+        // Fonction pour supprimer un article
+        function removeItem(button) {
+            if (document.querySelectorAll('.item-row').length > 1) {
+                button.parentElement.remove();
+                updateTotals();
+            } else {
+                alert('Vous devez garder au moins un service.');
+            }
+        }
+        
+        // Fonction pour calculer les totaux automatiquement
+        function updateTotals() {
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach(row => {
+                const quantity = row.children[1].value || 0;
+                const unitPrice = row.children[2].value || 0;
+                const total = quantity * unitPrice;
+                row.children[3].value = total;
+            });
+        }
+        
+        // Écouter les changements pour recalculer automatiquement
+        document.addEventListener('input', function(e) {
+            if (e.target.type === 'number' && e.target.placeholder !== 'Total HT') {
+                updateTotals();
+            }
+        });
+        
+        // Fonction pour générer le devis
+        function generateQuote() {
+            // Mettre à jour les informations de l'entreprise
+            document.getElementById('displayCompanyName').textContent = document.getElementById('companyName').value;
+            document.getElementById('displayCompanyTagline').textContent = document.getElementById('companyTagline').value;
+            document.getElementById('displayCompanyAddress').innerHTML = document.getElementById('companyAddress').value.replace(/\n/g, '<br>');
+            document.getElementById('displayCompanyPhone').textContent = document.getElementById('companyPhone').value;
+            document.getElementById('displayCompanyEmail').textContent = document.getElementById('companyEmail').value;
+            document.getElementById('displayManagerName').textContent = document.getElementById('managerName').value;
+            
+            // Mettre à jour les métadonnées du devis
+            document.getElementById('displayQuoteNumber').textContent = document.getElementById('quoteNumber').value;
+            document.getElementById('displayQuoteDate').textContent = new Date(document.getElementById('quoteDate').value).toLocaleDateString('fr-FR');
+            document.getElementById('displayValidityDate').textContent = new Date(document.getElementById('validityDate').value).toLocaleDateString('fr-FR');
+            document.getElementById('displayClientName').textContent = document.getElementById('clientName').value;
+            
+            // Générer le tableau des services
+            const tableBody = document.getElementById('displayItemsTable');
+            tableBody.innerHTML = '';
+            let totalHT = 0;
+            
+            document.querySelectorAll('.item-row').forEach(row => {
+                const description = row.children[0].value;
+                const quantity = row.children[1].value;
+                const unitPrice = parseFloat(row.children[2].value) || 0;
+                const total = quantity * unitPrice;
+                const remarks = row.children[4].value;
+                
+                totalHT += total;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${description}</td>
+                    <td>${quantity}</td>
+                    <td>${unitPrice.toLocaleString()} F</td>
+                    <td>${total.toLocaleString()} F</td>
+                    <td>${remarks}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Calculer la TVA et le total TTC
+            const tva = totalHT * 0.18;
+            const totalTTC = totalHT + tva;
+            
+            // Mettre à jour les totaux
+            document.getElementById('displayTotalHT').textContent = totalHT.toLocaleString() + ' FCFA';
+            document.getElementById('displayTVA').textContent = tva.toLocaleString() + ' FCFA';
+            document.getElementById('displayTotalTTC').textContent = totalTTC.toLocaleString() + ' FCFA';
+            
+            // Afficher le devis
+            document.getElementById('generatedQuote').classList.add('show');
+            
+            // Faire défiler jusqu'au devis
+            document.getElementById('generatedQuote').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Fonction pour imprimer le devis
+        function printQuote() {
+            if (!document.getElementById('generatedQuote').classList.contains('show')) {
+                alert('Veuillez d\'abord générer le devis.');
+                return;
+            }
+            window.print();
+        }
+        
+        // Initialiser les totaux au chargement de la page
+        updateTotals();
+    </script>
+</body>
+</html>

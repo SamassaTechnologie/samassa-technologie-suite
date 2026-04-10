@@ -112,6 +112,22 @@
             background: #c82333;
         }
         
+        /* Filigrane */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .watermark img {
+            width: 400px;
+            height: auto;
+        }
+        
         /* Styles pour l'impression */
         .invoice {
             display: none;
@@ -119,6 +135,8 @@
             padding: 40px;
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         .invoice.show {
@@ -276,6 +294,9 @@
     </style>
 </head>
 <body>
+    <div class="watermark">
+        <img src="watermark.png" alt="Watermark">
+    </div>
     <div class="container">
         <!-- Formulaire de saisie -->
         <div class="form-section">

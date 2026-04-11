@@ -121,11 +121,17 @@
             opacity: 0.1;
             z-index: 0;
             pointer-events: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            color-adjust: exact;
         }
         
         .watermark img {
             width: 400px;
             height: auto;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            color-adjust: exact;
         }
         
         /* Styles pour l'impression */
@@ -241,9 +247,19 @@
         }
         
         .signature-image {
-            max-width: 200px;
+            max-width: 150px;
             height: auto;
-            margin: 20px 0;
+            margin: 10px 0;
+        }
+        
+        .stamp-image {
+            max-width: 120px;
+            height: auto;
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            opacity: 0.8;
+            transform: rotate(-15deg);
         }
         
         .signature-name {
@@ -427,9 +443,10 @@ Rue Soundiata Keita</textarea>
             <div>Total TTC: <span id="displayTotalTTC">2000 FCFA</span></div>
         </div>
         
-        <div class="signature">
+        <div class="signature" style="position: relative;">
             <div class="signature-title">Le Gérant</div>
             <img src="signature.png" alt="Signature" class="signature-image">
+            <img src="cachet.png" alt="Cachet" class="stamp-image">
             <div class="signature-name" id="displayManagerName">Boussé SAMASSA</div>
         </div>
         

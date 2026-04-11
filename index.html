@@ -1,25 +1,427 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="icon" href="icon-512x512.png" type="image/png">
-  <link rel="apple-touch-icon" href="icon-512x512.png">
-  <meta name="theme-color" content="#ffffff">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Samassa Technologie</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMASSA TECHNOLOGIE - Suite de Gestion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* En-tête */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-section img {
+            width: 80px;
+            height: 80px;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .company-info h1 {
+            font-size: 42px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .company-info p {
+            font-size: 18px;
+            font-style: italic;
+            opacity: 0.95;
+        }
+        
+        .header-divider {
+            width: 100px;
+            height: 4px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+        
+        .header-description {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Grille de cartes */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-icon {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .card-content {
+            padding: 25px;
+        }
+        
+        .card-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .card-features {
+            list-style: none;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .card-features li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .card-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .card-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .card-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Section d'information */
+        .info-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        
+        .info-item h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .info-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-contact {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .footer-contact a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-contact a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .company-info h1 {
+                font-size: 32px;
+            }
+            
+            .company-info p {
+                font-size: 16px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-section {
+                padding: 25px;
+            }
+            
+            .footer-contact {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Bienvenue chez Samassa Technologie</h1>
-  <ul>
-    <li><a href="facture.html">Générateur de Facture</a></li>
-    <li><a href="devis.html">Générateur de Devis</a></li>
-    <li><a href="recu.html">Générateur de Reçu</a></li>
-    <li><a href="intervention.html">Document d'intervention</a></li>
-  </ul>
-  <footer>
-    Samassa Technologie – Tout pour l’informatique – Grand Marché de Kayes, près du 1er arrondissement de la police – Rue Soundiata Keita<br>
-    Tél : 00223 77291931 – samassatechnologie10@gmail.com
-  </footer>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <div class="logo-section">
+                <img src="logo.png" alt="Logo SAMASSA TECHNOLOGIE">
+                <div class="company-info">
+                    <h1>SAMASSA TECHNOLOGIE</h1>
+                    <p>Tout pour l'informatique</p>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-description">
+                <p>Suite complète de gestion documentaire pour votre entreprise technologique</p>
+            </div>
+        </div>
+        
+        <!-- Grille de cartes -->
+        <div class="cards-grid">
+            <!-- Facture -->
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <div class="card-content">
+                    <div class="card-title">Facture</div>
+                    <div class="card-description">Générez des factures professionnelles avec calcul automatique de la TVA.</div>
+                    <ul class="card-features">
+                        <li>Calcul TVA automatique</li>
+                        <li>Signature numérique</li>
+                        <li>Cachet d'entreprise</li>
+                        <li>Impression directe</li>
+                    </ul>
+                    <a href="facture.html" class="card-button">Accéder →</a>
+                </div>
+            </div>
+            
+            <!-- Reçu -->
+            <div class="card">
+                <div class="card-icon">🧾</div>
+                <div class="card-content">
+                    <div class="card-title">Reçu de Paiement</div>
+                    <div class="card-description">Créez des reçus de paiement détaillés et professionnels.</div>
+                    <ul class="card-features">
+                        <li>Détails de transaction</li>
+                        <li>Modes de paiement</li>
+                        <li>Signature validée</li>
+                        <li>Traçabilité complète</li>
+                    </ul>
+                    <a href="recu.html" class="card-button">Accéder →</a>
+                </div>
+            </div>
+            
+            <!-- Devis -->
+            <div class="card">
+                <div class="card-icon">📋</div>
+                <div class="card-content">
+                    <div class="card-title">Devis</div>
+                    <div class="card-description">Établissez des devis détaillés en FCFA avec validité personnalisée.</div>
+                    <ul class="card-features">
+                        <li>Calcul TVA 18%</li>
+                        <li>Validité configurable</li>
+                        <li>Services multiples</li>
+                        <li>Export imprimable</li>
+                    </ul>
+                    <a href="devis.html" class="card-button">Accéder →</a>
+                </div>
+            </div>
+            
+            <!-- Fiche d'Intervention -->
+            <div class="card">
+                <div class="card-icon">🔧</div>
+                <div class="card-content">
+                    <div class="card-title">Fiche d'Intervention</div>
+                    <div class="card-description">Documentez vos interventions techniques de manière professionnelle.</div>
+                    <ul class="card-features">
+                        <li>Détails équipement</li>
+                        <li>Actions effectuées</li>
+                        <li>Facturation intégrée</li>
+                        <li>Double signature</li>
+                    </ul>
+                    <a href="intervention.html" class="card-button">Accéder →</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section d'information -->
+        <div class="info-section">
+            <h2>✨ Caractéristiques Principales</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h3>🎨 Design Professionnel</h3>
+                    <p>Interface moderne et intuitive adaptée à votre marque SAMASSA TECHNOLOGIE.</p>
+                </div>
+                <div class="info-item">
+                    <h3>🖨️ Impression Optimisée</h3>
+                    <p>Filigrane visible, signature et cachet intégrés pour une impression professionnelle.</p>
+                </div>
+                <div class="info-item">
+                    <h3>💰 Gestion Financière</h3>
+                    <p>Calculs automatiques de TVA et totaux en FCFA pour une gestion précise.</p>
+                </div>
+                <div class="info-item">
+                    <h3>📱 Responsive Design</h3>
+                    <p>Accessible sur tous les appareils : ordinateurs, tablettes et téléphones.</p>
+                </div>
+                <div class="info-item">
+                    <h3>🔒 Sécurité</h3>
+                    <p>Signature numérique et cachet d'entreprise pour l'authenticité des documents.</p>
+                </div>
+                <div class="info-item">
+                    <h3>⚡ Performance</h3>
+                    <p>Chargement rapide et génération instantanée des documents.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2025 SAMASSA TECHNOLOGIE - Tous droits réservés</p>
+            <p>Suite de gestion documentaire v1.0</p>
+            <div class="footer-contact">
+                <a href="tel:00223 77291931">📞 00223 77291931</a>
+                <a href="mailto:samassatechnologie10@gmail.com">📧 samassatechnologie10@gmail.com</a>
+                <a href="#">🌐 Grand Marché de Kayes</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

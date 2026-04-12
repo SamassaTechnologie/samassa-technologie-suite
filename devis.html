@@ -397,6 +397,8 @@ Rue Soundiata Keita</textarea>
             <div style="margin-top: 20px;">
                 <button type="button" class="btn btn-success" onclick="generateQuote()">📄 Générer le devis</button>
                 <button type="button" class="btn" onclick="printQuote()">🖨️ Imprimer</button>
+                <button type="button" class="btn" onclick="saveQuoteToLocalStorage()" style="background: #25D366;">💾 Enregistrer</button>
+                <button type="button" class="btn" onclick="sendQuoteViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
     </div>
@@ -584,6 +586,43 @@ Rue Soundiata Keita</textarea>
                 return;
             }
             window.print();
+        }
+        
+        // Fonction pour enregistrer le devis dans localStorage
+        function saveQuoteToLocalStorage() {
+            const quoteData = {
+                quoteNumber: document.getElementById('quoteNumber').value,
+                quoteDate: document.getElementById('quoteDate').value,
+                clientName: document.getElementById('clientName').value,
+                companyName: document.getElementById('companyName').value,
+                totalTTC: document.getElementById('displayTotalTTC').textContent,
+                validityDate: document.getElementById('validityDate').value,
+                timestamp: new Date().toLocaleString('fr-FR')
+            };
+            
+            const quotes = JSON.parse(localStorage.getItem('devis')) || [];
+            quotes.push(quoteData);
+            localStorage.setItem('devis', JSON.stringify(quotes));
+            alert('Devis enregistré avec succès!');
+        }
+        
+        // Fonction pour envoyer le devis via WhatsApp
+        function sendQuoteViaWhatsApp() {
+            if (!document.getElementById('generatedQuote').classList.contains('show')) {
+                alert('Veuillez d\'abord générer le devis.');
+                return;
+            }
+            
+            const quoteNumber = document.getElementById('displayQuoteNumber').textContent;
+            const clientName = document.getElementById('displayClientName').textContent;
+            const totalTTC = document.getElementById('displayTotalTTC').textContent;
+            const validityDate = document.getElementById('displayValidityDate').textContent;
+            
+            const message = `Bonjour ${clientName},\n\nVoici votre devis de SAMASSA TECHNOLOGIE :\n\n📄 Numéro : ${quoteNumber}\n💰 Montant TTC : ${totalTTC}\n📅 Validité : jusqu'au ${validityDate}\n\nN'hésitez pas à nous contacter pour toute question.\n\nMerci !`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
         }
         
         // Initialiser les totaux au chargement de la page

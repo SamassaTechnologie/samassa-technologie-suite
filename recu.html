@@ -415,6 +415,8 @@
             <div style="margin-top: 20px;">
                 <button type="button" class="btn btn-success" onclick="generateReceipt()">🧾 Générer le reçu</button>
                 <button type="button" class="btn" onclick="printReceipt()">🖨️ Imprimer</button>
+                <button type="button" class="btn" onclick="saveReceiptToLocalStorage()" style="background: #25D366;">💾 Enregistrer</button>
+                <button type="button" class="btn" onclick="sendReceiptViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
     </div>
@@ -605,6 +607,42 @@
                 return;
             }
             window.print();
+        }
+        
+        // Fonction pour enregistrer le reçu dans localStorage
+        function saveReceiptToLocalStorage() {
+            const receiptData = {
+                receiptNumber: document.getElementById('receiptNumber').value,
+                receiptDate: document.getElementById('receiptDate').value,
+                clientName: document.getElementById('clientFirstName').value + ' ' + document.getElementById('clientLastName').value,
+                totalAmount: document.getElementById('displayTotalAmount').textContent,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                timestamp: new Date().toLocaleString('fr-FR')
+            };
+            
+            const receipts = JSON.parse(localStorage.getItem('recus')) || [];
+            receipts.push(receiptData);
+            localStorage.setItem('recus', JSON.stringify(receipts));
+            alert('Reçu enregistré avec succès!');
+        }
+        
+        // Fonction pour envoyer le reçu via WhatsApp
+        function sendReceiptViaWhatsApp() {
+            if (!document.getElementById('generatedReceipt').classList.contains('show')) {
+                alert('Veuillez d\'abord générer le reçu.');
+                return;
+            }
+            
+            const receiptNumber = document.getElementById('displayReceiptNumber').textContent;
+            const clientName = document.getElementById('displayClientFirstName').textContent;
+            const totalAmount = document.getElementById('displayTotalAmount').textContent;
+            const paymentMethod = document.getElementById('displayPaymentMethod').textContent;
+            
+            const message = `Bonjour ${clientName},\n\nVoici votre reçu de paiement SAMASSA TECHNOLOGIE :\n\n🧾 Numéro : ${receiptNumber}\n💰 Montant : ${totalAmount}\n💳 Mode de paiement : ${paymentMethod}\n\nMerci pour votre confiance !`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
         }
         
         // Initialiser les totaux au chargement de la page

@@ -418,6 +418,8 @@
             <div style="margin-top: 20px;">
                 <button type="button" class="btn btn-success" onclick="generateIntervention()">📄 Générer la fiche</button>
                 <button type="button" class="btn" onclick="printIntervention()">🖨️ Imprimer</button>
+                <button type="button" class="btn" onclick="saveInterventionToLocalStorage()" style="background: #25D366;">💾 Enregistrer</button>
+                <button type="button" class="btn" onclick="sendInterventionViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
     </div>
@@ -592,6 +594,44 @@
                 return;
             }
             window.print();
+        }
+        
+        // Fonction pour enregistrer la fiche dans localStorage
+        function saveInterventionToLocalStorage() {
+            const interventionData = {
+                interventionNumber: document.getElementById('interventionNumber').value,
+                interventionDate: document.getElementById('interventionDate').value,
+                clientName: document.getElementById('clientName').value,
+                equipmentType: document.getElementById('equipmentType').value,
+                totalCost: document.getElementById('displayTotalCost').textContent,
+                paymentStatus: document.getElementById('paymentStatus').value,
+                timestamp: new Date().toLocaleString('fr-FR')
+            };
+            
+            const interventions = JSON.parse(localStorage.getItem('interventions')) || [];
+            interventions.push(interventionData);
+            localStorage.setItem('interventions', JSON.stringify(interventions));
+            alert('Fiche d\'intervention enregistrée avec succès!');
+        }
+        
+        // Fonction pour envoyer la fiche via WhatsApp
+        function sendInterventionViaWhatsApp() {
+            if (!document.getElementById('generatedIntervention').classList.contains('show')) {
+                alert('Veuillez d\'abord générer la fiche d\'intervention.');
+                return;
+            }
+            
+            const interventionNumber = document.getElementById('displayInterventionNumber').textContent;
+            const clientName = document.getElementById('displayClientName').textContent;
+            const equipmentType = document.getElementById('displayEquipmentType').textContent;
+            const totalCost = document.getElementById('displayTotalCost').textContent;
+            const paymentStatus = document.getElementById('displayPaymentStatus').textContent;
+            
+            const message = `Bonjour ${clientName},\n\nVoici votre fiche d'intervention SAMASSA TECHNOLOGIE :\n\n📄 Numéro : ${interventionNumber}\n💻 Équipement : ${equipmentType}\n💰 Coût total : ${totalCost}\n💳 Statut paiement : ${paymentStatus}\n\nMerci pour votre confiance !`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
         }
         
         // Initialiser le total

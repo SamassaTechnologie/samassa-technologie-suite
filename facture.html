@@ -388,6 +388,8 @@ Rue Soundiata Keita</textarea>
             <div style="margin-top: 20px;">
                 <button type="button" class="btn btn-success" onclick="generateInvoice()">📄 Générer la facture</button>
                 <button type="button" class="btn" onclick="printInvoice()">🖨️ Imprimer</button>
+                <button type="button" class="btn" onclick="saveToLocalStorage()" style="background: #25D366;">💾 Enregistrer</button>
+                <button type="button" class="btn" onclick="sendViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
     </div>
@@ -560,6 +562,42 @@ Rue Soundiata Keita</textarea>
                 return;
             }
             window.print();
+        }
+        
+        // Fonction pour enregistrer dans localStorage
+        function saveToLocalStorage() {
+            const invoiceData = {
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                invoiceDate: document.getElementById('invoiceDate').value,
+                clientName: document.getElementById('clientName').value,
+                companyName: document.getElementById('companyName').value,
+                totalTTC: document.getElementById('displayTotalTTC').textContent,
+                timestamp: new Date().toLocaleString('fr-FR')
+            };
+            
+            const invoices = JSON.parse(localStorage.getItem('factures')) || [];
+            invoices.push(invoiceData);
+            localStorage.setItem('factures', JSON.stringify(invoices));
+            alert('Facture enregistrée avec succès!');
+        }
+        
+        // Fonction pour envoyer via WhatsApp
+        function sendViaWhatsApp() {
+            if (!document.getElementById('generatedInvoice').classList.contains('show')) {
+                alert('Veuillez d\'abord générer la facture.');
+                return;
+            }
+            
+            const invoiceNumber = document.getElementById('displayInvoiceNumber').textContent;
+            const clientName = document.getElementById('displayClientName').textContent;
+            const totalTTC = document.getElementById('displayTotalTTC').textContent;
+            const invoiceDate = document.getElementById('displayInvoiceDate').textContent;
+            
+            const message = `Bonjour ${clientName},\n\nVoici votre facture de SAMASSA TECHNOLOGIE :\n\n📄 Numéro : ${invoiceNumber}\n📅 Date : ${invoiceDate}\n💰 Montant TTC : ${totalTTC}\n\nMerci pour votre confiance !`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
         }
         
         // Initialiser les totaux au chargement de la page

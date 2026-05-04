@@ -506,25 +506,19 @@ Rue Soundiata Keita</textarea>
         
         // Fonction pour générer la facture
         function generateInvoice() {
-            // Mettre à jour les informations de l'entreprise
-            document.getElementById('displayCompanyName').textContent = document.getElementById('companyName').value;
-            document.getElementById('displayCompanyTagline').textContent = document.getElementById('companyTagline').value;
-            document.getElementById('displayCompanyAddress').innerHTML = document.getElementById('companyAddress').value.replace(/\n/g, '<br>');
-            document.getElementById('displayCompanyPhone').textContent = document.getElementById('companyPhone').value;
-            document.getElementById('displayCompanyEmail').textContent = document.getElementById('companyEmail').value;
-            document.getElementById('displayManagerName').textContent = document.getElementById('managerName').value;
-            
-            // Mettre à jour les métadonnées de la facture
-            document.getElementById('displayInvoiceNumber').textContent = document.getElementById('invoiceNumber').value;
-            document.getElementById('displayInvoiceDate').textContent = new Date(document.getElementById('invoiceDate').value).toLocaleDateString('fr-FR');
-            document.getElementById('displayClientName').textContent = document.getElementById('clientName').value;
-            
-            // Générer le tableau des articles
-            const tableBody = document.getElementById('displayItemsTable');
-            tableBody.innerHTML = '';
-            let totalHT = 0;
-            
-            document.querySelectorAll('.item-row').forEach(row => {
+    // Mettre à jour les informations de l'entreprise
+    document.getElementById('displayCompanyName').textContent = document.getElementById('companyName').value;
+    // ... reste du code inchangé ...
+    
+    // Afficher la facture
+    document.getElementById('generatedInvoice').classList.add('show');
+    
+    // Faire défiler jusqu'à la facture
+    document.getElementById('generatedInvoice').scrollIntoView({ behavior: 'smooth' });
+    
+    // ✨ NOUVEAU : Sauvegarder automatiquement dans le cloud
+    saveToCloud('facture');
+}
                 const description = row.children[0].value;
                 const quantity = row.children[1].value;
                 const unitPrice = parseFloat(row.children[2].value) || 0;
@@ -602,6 +596,43 @@ Rue Soundiata Keita</textarea>
         
         // Initialiser les totaux au chargement de la page
         updateTotals();
+        // Fonction pour sauvegarder dans le cloud
+function saveToCloud(documentType) {
+    const invoiceNumber = document.getElementById('invoiceNumber').value;
+    const clientName = document.getElementById('clientName').value;
+    const invoiceDate = document.getElementById('invoiceDate').value;
+    const totalTTC = document.getElementById('displayTotalTTC').textContent;
+    const clientPhone = document.getElementById('clientPhone')?.value || 'N/A';
+    
+    const documentData = {
+        documentType: documentType,
+        documentNumber: invoiceNumber,
+        clientName: clientName,
+        clientPhone: clientPhone,
+        documentDate: invoiceDate,
+        amount: parseFloat(totalTTC.replace(/[^\d]/g, '')) || 0,
+        paymentStatus: 'pending',
+        items: []
+    };
+    
+    // Récupérer les articles
+    document.querySelectorAll('.item-row').forEach(row => {
+        documentData.items.push({
+            description: row.children[0].value,
+            quantity: row.children[1].value,
+            unitPrice: row.children[2].value
+        });
+    });
+    
+    // Appeler la fonction du script cloud
+    if (typeof saveDocumentToCloud === 'function') {
+        saveDocumentToCloud(documentData);
+    }
+}
     </script>
+        <!-- Script d'intégration cloud SAMASSA TECHNOLOGIE -->
+    <script src="cloud-integration.js"></script>
+</body>
+</html>
 </body>
 </html>

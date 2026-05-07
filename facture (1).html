@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devis - Samassa Technologie</title>
+    <title>Facture - Samassa Technologie</title>
     <style>
         * {
             margin: 0;
@@ -88,6 +88,14 @@
             background: #1e7e34;
         }
         
+        .btn-cloud {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-cloud:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%);
+        }
+        
         .item-row {
             display: grid;
             grid-template-columns: 3fr 1fr 1fr 1fr 2fr auto;
@@ -135,7 +143,7 @@
         }
         
         /* Styles pour l'impression */
-        .quote {
+        .invoice {
             display: none;
             background: white;
             padding: 40px;
@@ -145,7 +153,7 @@
             z-index: 1;
         }
         
-        .quote.show {
+        .invoice.show {
             display: block;
         }
         
@@ -181,7 +189,7 @@
             margin: 30px 0;
         }
         
-        .quote-title {
+        .invoice-title {
             text-align: center;
             font-size: 20px;
             font-weight: bold;
@@ -189,13 +197,13 @@
             margin-bottom: 30px;
         }
         
-        .quote-meta {
+        .invoice-meta {
             display: flex;
             justify-content: space-between;
             margin-bottom: 30px;
         }
         
-        .quote-meta div {
+        .invoice-meta div {
             font-weight: bold;
         }
         
@@ -230,12 +238,6 @@
         
         .totals div {
             margin-bottom: 5px;
-        }
-        
-        .validity {
-            text-align: center;
-            font-style: italic;
-            margin-bottom: 20px;
         }
         
         .signature {
@@ -277,6 +279,48 @@
             font-weight: bold;
             margin-top: 20px;
         }
+
+        /* Notification Cloud */
+        .cloud-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 9999;
+            display: none;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .cloud-notification.show {
+            display: block;
+        }
+
+        .cloud-notification.success {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .cloud-notification.error {
+            background: #dc3545;
+        }
+
+        .cloud-notification.loading {
+            background: #ffc107;
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
         
         /* Media queries pour l'impression */
         @media print {
@@ -289,7 +333,7 @@
                 display: none;
             }
             
-            .quote {
+            .invoice {
                 display: block !important;
                 box-shadow: none;
                 padding: 20px;
@@ -302,7 +346,7 @@
                 text-align: center;
             }
             
-            .quote-meta {
+            .invoice-meta {
                 flex-direction: column;
                 gap: 10px;
             }
@@ -320,27 +364,27 @@
     <div class="container">
         <!-- Formulaire de saisie -->
         <div class="form-section">
-            <h2>📋 Informations du devis</h2>
+            <h2>📋 Informations de la facture</h2>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="quoteNumber">Numéro de devis :</label>
-                    <input type="text" id="quoteNumber" value="001" required>
+                    <label for="invoiceNumber">Numéro de facture :</label>
+                    <input type="text" id="invoiceNumber" value="008" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="quoteDate">Date :</label>
-                    <input type="date" id="quoteDate" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="validityDate">Validité jusqu'au :</label>
-                    <input type="date" id="validityDate" required>
+                    <label for="invoiceDate">Date :</label>
+                    <input type="date" id="invoiceDate" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="clientName">Nom du client :</label>
-                    <input type="text" id="clientName" value="" required>
+                    <input type="text" id="clientName" value="DIABA DIAB MULTI-SERVICE" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPhone">Téléphone du client :</label>
+                    <input type="text" id="clientPhone" placeholder="00223 XXXXXXXX">
                 </div>
             </div>
             
@@ -379,52 +423,53 @@ Rue Soundiata Keita</textarea>
                 </div>
             </div>
             
-            <h2>🛍️ Services</h2>
+            <h2>🛍️ Articles</h2>
             
             <div id="itemsContainer">
                 <div class="item-row">
-                    <input type="text" placeholder="Description du service" value="">
+                    <input type="text" placeholder="Description" value="Activation de Microsoft Office 2019">
                     <input type="number" placeholder="Quantité" value="1" min="1">
-                    <input type="number" placeholder="Prix unitaire" value="0" min="0" step="0.01">
+                    <input type="number" placeholder="Prix unitaire" value="2000" min="0" step="0.01">
                     <input type="number" placeholder="Total HT" readonly>
                     <input type="text" placeholder="Remarques" value="">
                     <button type="button" class="remove-btn" onclick="removeItem(this)">❌</button>
                 </div>
             </div>
             
-            <button type="button" class="btn" onclick="addItem()">➕ Ajouter un service</button>
+            <button type="button" class="btn" onclick="addItem()">➕ Ajouter un article</button>
             
             <div style="margin-top: 20px;">
-                <button type="button" class="btn btn-success" onclick="generateQuote()">📄 Générer le devis</button>
-                <button type="button" class="btn" onclick="printQuote()">🖨️ Imprimer</button>
-                <button type="button" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="saveToCloud('devis')">☁️ Sauvegarder au Cloud</button>
-                <button type="button" class="btn" onclick="sendQuoteViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
+                <button type="button" class="btn btn-success" onclick="generateInvoice()">📄 Générer la facture</button>
+                <button type="button" class="btn" onclick="printInvoice()">🖨️ Imprimer</button>
+                <button type="button" class="btn btn-cloud" onclick="saveToCloud('facture')">☁️ Sauvegarder au Cloud</button>
+                <button type="button" class="btn" onclick="sendViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
     </div>
     
-    <!-- Devis généré -->
-    <div class="quote" id="generatedQuote">
+    <!-- Facture générée -->
+    <div class="invoice" id="generatedInvoice">
         <div class="header">
             <div class="company-info">
                 <div class="company-name" id="displayCompanyName">SAMASSA TECHNOLOGIE</div>
                 <div class="company-tagline" id="displayCompanyTagline">Tout pour l'informatique</div>
-                <div class="company-address">
-                    <div id="displayCompanyAddress">Grand Marché de Kayes, près du 1er arrondissement de la police<br>Rue Soundiata Keita</div>
-                    <div>Tel: <span id="displayCompanyPhone">00223 77291931</span></div>
-                    <div>Email: <span id="displayCompanyEmail">samassatechnologie10@gmail.com</span></div>
-                </div>
+                <div class="company-address" id="displayCompanyAddress">Grand Marché de Kayes</div>
+                <div>Tél: <span id="displayCompanyPhone">00223 77291931</span> | Email: <span id="displayCompanyEmail">samassatechnologie10@gmail.com</span></div>
             </div>
         </div>
         
         <hr class="separator">
         
-        <div class="quote-title">DEVIS</div>
+        <div class="invoice-title">FACTURE</div>
         
-        <div class="quote-meta">
-            <div>Devis N° : <span id="displayQuoteNumber">001</span></div>
-            <div>Date : <span id="displayQuoteDate">30/07/2025</span></div>
-            <div>Client : <span id="displayClientName">Client</span></div>
+        <div class="invoice-meta">
+            <div>
+                Numéro: <span id="displayInvoiceNumber">008</span><br>
+                Date: <span id="displayInvoiceDate">01/01/2024</span>
+            </div>
+            <div>
+                Client: <span id="displayClientName">DIABA DIAB MULTI-SERVICE</span>
+            </div>
         </div>
         
         <table class="items-table">
@@ -433,98 +478,92 @@ Rue Soundiata Keita</textarea>
                     <th>Description</th>
                     <th>Quantité</th>
                     <th>Prix Unitaire</th>
-                    <th>Total HT</th>
+                    <th>Total</th>
                     <th>Remarques</th>
                 </tr>
             </thead>
             <tbody id="displayItemsTable">
                 <tr>
-                    <td>Service</td>
+                    <td>Activation de Microsoft Office 2019</td>
                     <td>1</td>
-                    <td>0 F</td>
-                    <td>0 F</td>
+                    <td>2000 F</td>
+                    <td>2000 F</td>
                     <td></td>
                 </tr>
             </tbody>
         </table>
         
         <div class="totals">
-            <div>Total HT: <span id="displayTotalHT">0 FCFA</span></div>
-            <div>TVA (18%): <span id="displayTVA">0 FCFA</span></div>
-            <div>Total TTC: <span id="displayTotalTTC">0 FCFA</span></div>
+            <div>Total HT: <span id="displayTotalHT">2000 FCFA</span></div>
+            <div style="font-size: 18px; color: #2c5aa0;">Total TTC: <span id="displayTotalTTC">2000 FCFA</span></div>
         </div>
         
-        <div class="validity">
-            Validité du devis : jusqu'au <span id="displayValidityDate">30/07/2025</span>
-        </div>
-        
-        <div class="signature" style="position: relative;">
-            <div class="signature-title">Le Gérant</div>
+        <div class="signature">
+            <div class="signature-title">Signature du Gérant</div>
             <img src="signature.png" alt="Signature" class="signature-image">
-            <img src="cachet.png" alt="Cachet" class="stamp-image">
             <div class="signature-name" id="displayManagerName">Boussé SAMASSA</div>
         </div>
         
-        <div class="thank-you">Merci pour votre confiance!</div>
+        <img src="cachet.png" alt="Cachet" class="stamp-image">
+        
+        <div class="thank-you">Merci pour votre confiance ! SAMASSA TECHNOLOGIE</div>
     </div>
 
+    <!-- Notification Cloud -->
+    <div class="cloud-notification" id="cloudNotification"></div>
+    
     <script>
-        // Initialiser la date d'aujourd'hui
-        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
-        
-        // Initialiser la date de validité (30 jours après)
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 30);
-        document.getElementById('validityDate').value = tomorrow.toISOString().split('T')[0];
-        
-        // Fonction pour ajouter un nouvel article
+        // Fonction pour ajouter un article
         function addItem() {
             const container = document.getElementById('itemsContainer');
-            const newItem = document.createElement('div');
-            newItem.className = 'item-row';
-            newItem.innerHTML = `
-                <input type="text" placeholder="Description du service">
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <input type="text" placeholder="Description">
                 <input type="number" placeholder="Quantité" value="1" min="1">
                 <input type="number" placeholder="Prix unitaire" value="0" min="0" step="0.01">
                 <input type="number" placeholder="Total HT" readonly>
                 <input type="text" placeholder="Remarques">
                 <button type="button" class="remove-btn" onclick="removeItem(this)">❌</button>
             `;
-            container.appendChild(newItem);
-            updateTotals();
+            container.appendChild(newRow);
         }
         
         // Fonction pour supprimer un article
         function removeItem(button) {
-            if (document.querySelectorAll('.item-row').length > 1) {
-                button.parentElement.remove();
-                updateTotals();
-            } else {
-                alert('Vous devez garder au moins un service.');
-            }
+            button.parentElement.remove();
         }
         
-        // Fonction pour calculer les totaux automatiquement
+        // Fonction pour mettre à jour les totaux
         function updateTotals() {
-            const rows = document.querySelectorAll('.item-row');
-            rows.forEach(row => {
-                const quantity = row.children[1].value || 0;
-                const unitPrice = row.children[2].value || 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const quantity = parseFloat(row.children[1].value) || 0;
+                const unitPrice = parseFloat(row.children[2].value) || 0;
                 const total = quantity * unitPrice;
-                row.children[3].value = total;
+                row.children[3].value = total.toLocaleString();
             });
         }
         
-        // Écouter les changements pour recalculer automatiquement
+        // Mettre à jour les totaux en temps réel
         document.addEventListener('input', function(e) {
             if (e.target.type === 'number' && e.target.placeholder !== 'Total HT') {
                 updateTotals();
             }
         });
         
-        // Fonction pour générer le devis
-        function generateQuote() {
-            // Mettre à jour les informations de l'entreprise
+        // Fonction pour afficher les notifications cloud
+        function showCloudNotification(message, type = 'success') {
+            const notification = document.getElementById('cloudNotification');
+            notification.textContent = message;
+            notification.className = `cloud-notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        // Fonction pour générer la facture
+        function generateInvoice() {
             document.getElementById('displayCompanyName').textContent = document.getElementById('companyName').value;
             document.getElementById('displayCompanyTagline').textContent = document.getElementById('companyTagline').value;
             document.getElementById('displayCompanyAddress').innerHTML = document.getElementById('companyAddress').value.replace(/\n/g, '<br>');
@@ -532,13 +571,10 @@ Rue Soundiata Keita</textarea>
             document.getElementById('displayCompanyEmail').textContent = document.getElementById('companyEmail').value;
             document.getElementById('displayManagerName').textContent = document.getElementById('managerName').value;
             
-            // Mettre à jour les métadonnées du devis
-            document.getElementById('displayQuoteNumber').textContent = document.getElementById('quoteNumber').value;
-            document.getElementById('displayQuoteDate').textContent = new Date(document.getElementById('quoteDate').value).toLocaleDateString('fr-FR');
-            document.getElementById('displayValidityDate').textContent = new Date(document.getElementById('validityDate').value).toLocaleDateString('fr-FR');
+            document.getElementById('displayInvoiceNumber').textContent = document.getElementById('invoiceNumber').value;
+            document.getElementById('displayInvoiceDate').textContent = new Date(document.getElementById('invoiceDate').value).toLocaleDateString('fr-FR');
             document.getElementById('displayClientName').textContent = document.getElementById('clientName').value;
             
-            // Générer le tableau des services
             const tableBody = document.getElementById('displayItemsTable');
             tableBody.innerHTML = '';
             let totalHT = 0;
@@ -563,62 +599,35 @@ Rue Soundiata Keita</textarea>
                 tableBody.appendChild(tr);
             });
             
-            // Calculer la TVA et le total TTC
-            const tva = totalHT * 0.18;
-            const totalTTC = totalHT + tva;
-            
-            // Mettre à jour les totaux
             document.getElementById('displayTotalHT').textContent = totalHT.toLocaleString() + ' FCFA';
-            document.getElementById('displayTVA').textContent = tva.toLocaleString() + ' FCFA';
-            document.getElementById('displayTotalTTC').textContent = totalTTC.toLocaleString() + ' FCFA';
+            document.getElementById('displayTotalTTC').textContent = totalHT.toLocaleString() + ' FCFA';
             
-            // Afficher le devis
-            document.getElementById('generatedQuote').classList.add('show');
-            
-            // Faire défiler jusqu'au devis
-            document.getElementById('generatedQuote').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('generatedInvoice').classList.add('show');
+            document.getElementById('generatedInvoice').scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Fonction pour imprimer le devis
-        function printQuote() {
-            if (!document.getElementById('generatedQuote').classList.contains('show')) {
-                alert('Veuillez d\'abord générer le devis.');
+        // Fonction pour imprimer la facture
+        function printInvoice() {
+            if (!document.getElementById('generatedInvoice').classList.contains('show')) {
+                alert('Veuillez d\'abord générer la facture.');
                 return;
             }
             window.print();
         }
         
-        // Fonction pour enregistrer le devis dans localStorage
-        function saveQuoteToLocalStorage() {
-            const quoteData = {
-                quoteNumber: document.getElementById('quoteNumber').value,
-                quoteDate: document.getElementById('quoteDate').value,
-                clientName: document.getElementById('clientName').value,
-                companyName: document.getElementById('companyName').value,
-                totalTTC: document.getElementById('displayTotalTTC').textContent,
-                validityDate: document.getElementById('validityDate').value,
-                timestamp: new Date().toLocaleString('fr-FR')
-            };
-            
-            const quotes = JSON.parse(localStorage.getItem('devis')) || [];
-            quotes.push(quoteData);
-            localStorage.setItem('devis', JSON.stringify(quotes));
-            alert('Devis enregistré avec succès!');
-        }
-        
-        // Fonction pour envoyer le devis via WhatsApp
-        function sendQuoteViaWhatsApp() {
-            if (!document.getElementById('generatedQuote').classList.contains('show')) {
-                alert('Veuillez d\'abord générer le devis.');
+        // Fonction pour envoyer via WhatsApp
+        function sendViaWhatsApp() {
+            if (!document.getElementById('generatedInvoice').classList.contains('show')) {
+                alert('Veuillez d\'abord générer la facture.');
                 return;
             }
             
-            const quoteNumber = document.getElementById('displayQuoteNumber').textContent;
+            const invoiceNumber = document.getElementById('displayInvoiceNumber').textContent;
             const clientName = document.getElementById('displayClientName').textContent;
             const totalTTC = document.getElementById('displayTotalTTC').textContent;
-            const validityDate = document.getElementById('displayValidityDate').textContent;
+            const invoiceDate = document.getElementById('displayInvoiceDate').textContent;
             
-            const message = `Bonjour ${clientName},\n\nVoici votre devis de SAMASSA TECHNOLOGIE :\n\n📄 Numéro : ${quoteNumber}\n💰 Montant TTC : ${totalTTC}\n📅 Validité : jusqu'au ${validityDate}\n\nN'hésitez pas à nous contacter pour toute question.\n\nMerci !`;
+            const message = `Bonjour ${clientName},\n\nVoici votre facture de SAMASSA TECHNOLOGIE :\n\n📄 Numéro : ${invoiceNumber}\n📅 Date : ${invoiceDate}\n💰 Montant TTC : ${totalTTC}\n\nMerci pour votre confiance !`;
             
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -627,25 +636,25 @@ Rue Soundiata Keita</textarea>
         
         // Fonction pour sauvegarder au cloud
         function saveToCloud(documentType) {
-            if (!document.getElementById('generatedQuote').classList.contains('show')) {
-                alert('Veuillez d\'abord générer le devis.');
+            if (!document.getElementById('generatedInvoice').classList.contains('show')) {
+                showCloudNotification('❌ Veuillez d\'abord générer la facture.', 'error');
                 return;
             }
 
-            const quoteNumber = document.getElementById('quoteNumber').value;
+            showCloudNotification('⏳ Sauvegarde en cours...', 'loading');
+
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
             const clientName = document.getElementById('clientName').value;
-            const clientPhone = document.getElementById('clientPhone')?.value || '';
-            const quoteDate = document.getElementById('quoteDate').value;
-            const validityDate = document.getElementById('validityDate').value;
+            const clientPhone = document.getElementById('clientPhone').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
             const totalTTC = document.getElementById('displayTotalTTC').textContent;
             
             const documentData = {
                 documentType: documentType,
-                documentNumber: quoteNumber,
+                documentNumber: invoiceNumber,
                 clientName: clientName,
                 clientPhone: clientPhone,
-                documentDate: quoteDate,
-                validityDate: validityDate,
+                documentDate: invoiceDate,
                 amount: parseFloat(totalTTC.replace(/[^\d]/g, '')) || 0,
                 paymentStatus: 'pending',
                 items: []
@@ -659,6 +668,7 @@ Rue Soundiata Keita</textarea>
                 });
             });
 
+            // Appel à l'API cloud
             const apiKey = 'samassa-default-key-2024';
             const apiUrl = 'https://samassacloud-kffmkg4t.manus.space/api/trpc/apiSave.saveDocument';
 
@@ -675,18 +685,18 @@ Rue Soundiata Keita</textarea>
             .then(response => response.json())
             .then(data => {
                 if (data.result && data.result.data) {
-                    alert('✅ Devis sauvegardé au cloud avec succès !');
+                    showCloudNotification(`✅ ${documentType.charAt(0).toUpperCase() + documentType.slice(1)} sauvegardée au cloud !`, 'success');
                 } else {
-                    alert('❌ Erreur lors de la sauvegarde');
+                    showCloudNotification('❌ Erreur lors de la sauvegarde', 'error');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                alert('❌ Erreur de connexion au cloud');
+                showCloudNotification('❌ Erreur de connexion au cloud', 'error');
             });
         }
         
-        // Initialiser les totaux au chargement de la page
+        // Initialiser les totaux au chargement
         updateTotals();
     </script>
 </body>

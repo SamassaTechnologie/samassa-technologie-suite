@@ -418,7 +418,7 @@
             <div style="margin-top: 20px;">
                 <button type="button" class="btn btn-success" onclick="generateIntervention()">📄 Générer la fiche</button>
                 <button type="button" class="btn" onclick="printIntervention()">🖨️ Imprimer</button>
-                <button type="button" class="btn" onclick="saveInterventionToLocalStorage()" style="background: #25D366;">💾 Enregistrer</button>
+                <button type="button" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="saveToCloud('intervention')">☁️ Sauvegarder au Cloud</button>
                 <button type="button" class="btn" onclick="sendInterventionViaWhatsApp()" style="background: #25D366;">📱 WhatsApp</button>
             </div>
         </div>
@@ -634,8 +634,79 @@
             window.open(whatsappUrl, '_blank');
         }
         
-        // Initialiser le total
-        calculateTotal();
+        // Fonction pour sauvegarder au cloud
+        function saveToCloud(documentType) {
+            if (!document.getElementById('generatedIntervention').classList.contains('show')) {
+                alert('Veuillez d\'abord générer la fiche d\'intervention.');
+                return;
+            }
+
+            const interventionNumber = document.getElementById('interventionNumber').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientPhone = document.getElementById('clientPhone')?.value || '';
+            const interventionDate = document.getElementById('interventionDate').value;
+            const totalCost = document.getElementById('totalCost').value;
+            const paymentStatus = document.getElementById('paymentStatus').value;
+            
+            const documentData = {
+                documentType: documentType,
+                documentNumber: interventionNumber,
+                clientName: clientName,
+                clientPhone: clientPhone,
+                documentDate: interventionDate,
+                amount: parseFloat(totalCost) || 0,
+                paymentStatus: paymentStatus.toLowerCase() === 'payé' ? 'paid' : 'pending',
+                items: []
+            };
+            
+            const laborCost = document.getElementById('laborCost').value;
+            const partsCost = document.getElementById('partsCost').value;
+            
+            if (laborCost) {
+                documentData.items.push({
+                    description: 'Coût de la main-d\'oeuvre',
+                    quantity: 1,
+                    unitPrice: laborCost
+                });
+            }
+            
+            if (partsCost) {
+                documentData.items.push({
+                    description: 'Coût des pièces',
+                    quantity: 1,
+                    unitPrice: partsCost
+                });
+            }
+
+            const apiKey = 'samassa-default-key-2024';
+            const apiUrl = 'https://samassacloud-kffmkg4t.manus.space/api/trpc/apiSave.saveDocument';
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    json: documentData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result && data.result.data) {
+                    alert('✅ Fiche d\'intervention sauvegardée au cloud avec succès !');
+                } else {
+                    alert('❌ Erreur lors de la sauvegarde');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('❌ Erreur de connexion au cloud');
+            });
+        }
+        
+        // Initialiser les totaux au chargement de la page
+        updateTotals();
     </script>
 </body>
 </html>

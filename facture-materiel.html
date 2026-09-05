@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facture matériel informatique — SAMASSA TECHNOLOGIE</title>
+  <style>
+    :root { --blue: #1418be; --navy: #101451; --ink: #18202b; --muted: #667085; --line: #dfe4ea; --soft: #f5f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; color: var(--ink); background: #eef2f7; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; }
+    .app { max-width: 1120px; margin: auto; }
+    .panel, .invoice { background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 35px rgba(16,24,40,.08); }
+    .panel { padding: 28px; }
+    .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+    .brand img { width: 58px; height: 58px; object-fit: contain; }
+    .brand h1 { margin: 0; color: var(--navy); font-size: 24px; letter-spacing: .02em; }
+    .brand p { margin: 2px 0 0; color: var(--muted); }
+    h2 { margin: 26px 0 14px; color: var(--navy); font-size: 16px; border-bottom: 2px solid #edf0f5; padding-bottom: 8px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.wide { grid-column: span 2; }
+    label { font-weight: 700; color: #344054; }
+    input, textarea, select { width: 100%; border: 1px solid #cfd6e0; border-radius: 8px; padding: 10px 11px; background: #fff; color: var(--ink); font: inherit; }
+    textarea { min-height: 72px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { outline: 3px solid rgba(20,24,190,.12); border-color: var(--blue); }
+    .items-head, .item { display: grid; grid-template-columns: 2.1fr 1fr .55fr .9fr .9fr 1.05fr 38px; gap: 8px; align-items: center; }
+    .items-head { padding: 0 8px 7px; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .item { margin-bottom: 8px; padding: 8px; background: var(--soft); border: 1px solid #e8ebf0; border-radius: 10px; }
+    .item input { padding: 8px; }
+    .line-total { font-weight: 800; text-align: right; white-space: nowrap; }
+    .remove { width: 32px; height: 32px; border: 0; border-radius: 7px; background: #fee4e2; color: #b42318; cursor: pointer; font-size: 17px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    button { border: 0; border-radius: 9px; padding: 11px 16px; cursor: pointer; font: inherit; font-weight: 800; }
+    .primary { background: var(--blue); color: #fff; } .secondary { background: #e8eafc; color: var(--blue); } .dark { background: var(--navy); color: #fff; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 7px; }
+    .invoice { display: none; position: relative; margin: 24px auto 0; padding: 48px; overflow: hidden; }
+    .invoice.show { display: block; }
+    .invoice::after { content: "SAMASSA TECHNOLOGIE"; position: absolute; z-index: 0; inset: 43% -10%; transform: rotate(-27deg); text-align: center; color: var(--blue); opacity: .035; font-size: 58px; font-weight: 900; letter-spacing: .12em; pointer-events: none; }
+    .invoice > * { position: relative; z-index: 1; }
+    .invoice-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; padding-bottom: 22px; border-bottom: 3px solid var(--blue); }
+    .invoice-brand { display: flex; gap: 14px; align-items: center; } .invoice-brand img { width: 70px; height: 70px; object-fit: contain; }
+    .invoice-brand h2 { border: 0; margin: 0; padding: 0; font-size: 23px; } .invoice-brand p { margin: 4px 0 0; color: var(--muted); }
+    .invoice-label { text-align: right; } .invoice-label h1 { margin: 0; color: var(--blue); font-size: 30px; letter-spacing: .06em; } .invoice-label p { margin: 6px 0 0; }
+    .meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 24px 0; }
+    .meta-box { border-left: 4px solid var(--blue); padding: 10px 14px; background: #f8f9fc; } .meta-box strong { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; } .meta-box span { font-weight: 800; }
+    .bill-to { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px; } .bill-to h3 { margin: 0 0 5px; font-size: 12px; color: var(--muted); text-transform: uppercase; } .bill-to p { margin: 0; white-space: pre-line; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 22px; } th, td { border-bottom: 1px solid var(--line); padding: 12px 9px; text-align: right; } th { background: var(--navy); color: #fff; font-size: 11px; text-transform: uppercase; } th:first-child, td:first-child { text-align: left; } td:first-child { font-weight: 700; }
+    .totals-wrap { display: flex; justify-content: flex-end; } .totals { width: min(100%, 350px); } .total-line { display: flex; justify-content: space-between; padding: 7px 0; } .grand { border-top: 2px solid var(--blue); color: var(--blue); font-size: 18px; font-weight: 900; padding-top: 12px; }
+    .terms { margin-top: 24px; padding: 13px; background: #f8f9fc; border-radius: 8px; color: #475467; font-size: 12px; } .signature-area { display: flex; justify-content: flex-end; margin-top: 26px; } .signature { position: relative; width: 230px; min-height: 170px; text-align: center; } .signature h3 { margin: 0; font-size: 12px; text-transform: uppercase; } .signature img.sign { display: block; width: 155px; height: auto; margin: 9px auto 0; } .signature img.stamp { position: absolute; width: 118px; height: 118px; object-fit: contain; right: -4px; top: 35px; opacity: .82; transform: rotate(-10deg); } .signature p { margin: 5px 0 0; font-style: italic; font-weight: 800; }
+    @media (max-width: 800px) { body { padding: 10px; } .panel, .invoice { padding: 20px; border-radius: 10px; } .grid, .meta, .bill-to { grid-template-columns: 1fr; } .field.wide { grid-column: span 1; } .items-head { display: none; } .item { grid-template-columns: 1fr 1fr; } .item input:first-child { grid-column: span 2; } .line-total { text-align: left; } .invoice-top { flex-direction: column; } .invoice-label { text-align: left; } table { font-size: 11px; } th, td { padding: 8px 4px; } }
+    @media print { body { padding: 0; background: #fff; } .panel { display: none; } .invoice { display: block !important; margin: 0; border: 0; border-radius: 0; box-shadow: none; min-height: 100vh; padding: 24px; } @page { size: A4; margin: 10mm; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="panel" aria-label="Formulaire de facture matériel informatique">
+      <div class="brand"><img src="logo.png" alt="Logo SAMASSA TECHNOLOGIE"><div><h1>Facture matériel informatique</h1><p>Ordinateurs portables, accessoires et équipements</p></div></div>
+      <h2>Informations de la facture</h2>
+      <div class="grid">
+        <div class="field"><label for="number">N° de facture</label><input id="number" value="MAT-001" required></div>
+        <div class="field"><label for="date">Date</label><input id="date" type="date" required></div>
+        <div class="field"><label for="payment">Mode de paiement</label><select id="payment"><option>Espèces</option><option>Orange Money</option><option>Moov Money</option><option>Virement bancaire</option><option>Chèque</option><option>À crédit</option></select></div>
+        <div class="field"><label for="client">Client / entreprise</label><input id="client" placeholder="Nom du client" required></div>
+        <div class="field"><label for="phone">Téléphone client</label><input id="phone" placeholder="00223 XX XX XX XX"></div>
+        <div class="field"><label for="tax">TVA (%)</label><input id="tax" type="number" min="0" max="100" step="0.01" value="18"></div>
+        <div class="field wide"><label for="address">Adresse / informations client</label><textarea id="address" placeholder="Adresse, quartier, ICE ou autres informations utiles"></textarea></div>
+      </div>
+      <h2>Articles vendus</h2>
+      <div class="items-head"><span>Désignation / référence</span><span>N° série</span><span>Qté</span><span>Prix unitaire</span><span>Remise (%)</span><span>Total HT</span><span></span></div>
+      <div id="items"></div>
+      <button class="secondary" type="button" id="add">+ Ajouter un article</button>
+      <p class="hint">Conseil : renseignez la référence et le numéro de série pour les ordinateurs portables et autres équipements suivis.</p>
+      <div class="actions"><button class="primary" type="button" id="generate">Générer la facture</button><button class="dark" type="button" id="print">Imprimer / PDF</button><button class="secondary" type="button" id="save">Enregistrer les données</button></div>
+    </section>
+
+    <section class="invoice" id="invoice" aria-label="Facture générée">
+      <div class="invoice-top"><div class="invoice-brand"><img src="logo.png" alt="Logo"><div><h2 id="outCompany">SAMASSA TECHNOLOGIE</h2><p>Tout pour l'informatique<br>Grand Marché de Kayes, près du 1er arrondissement de la police<br>Rue Soundiata Keita<br>Tel : 00223 77291931 · samassatechnologie10@gmail.com</p></div></div><div class="invoice-label"><h1>FACTURE</h1><p>Vente de matériel informatique</p></div></div>
+      <div class="meta"><div class="meta-box"><strong>Facture N°</strong><span id="outNumber"></span></div><div class="meta-box"><strong>Date d'émission</strong><span id="outDate"></span></div><div class="meta-box"><strong>Mode de paiement</strong><span id="outPayment"></span></div></div>
+      <div class="bill-to"><div><h3>Vendeur</h3><p><strong>SAMASSA TECHNOLOGIE</strong><br>Tout pour l'informatique<br>Kayes, Mali</p></div><div><h3>Facturé à</h3><p><strong id="outClient"></strong><br><span id="outPhone"></span><br><span id="outAddress"></span></p></div></div>
+      <table><thead><tr><th>Désignation / référence</th><th>N° série</th><th>Qté</th><th>Prix unitaire</th><th>Remise</th><th>Total HT</th></tr></thead><tbody id="outItems"></tbody></table>
+      <div class="totals-wrap"><div class="totals"><div class="total-line"><span>Sous-total HT</span><strong id="outSubtotal"></strong></div><div class="total-line"><span>TVA (<span id="outTaxRate"></span>%)</span><strong id="outTax"></strong></div><div class="total-line grand"><span>Total TTC</span><strong id="outTotal"></strong></div></div></div>
+      <div class="terms"><strong>Conditions :</strong> matériel livré conformément au détail ci-dessus. Toute réclamation doit être signalée à la réception. Merci pour votre confiance.</div>
+      <div class="signature-area"><div class="signature"><h3>Le Gérant</h3><img class="sign" src="signature.png" alt="Signature du gérant"><img class="stamp" src="cachet-signature-blue.png" alt="Cachet bleu harmonisé avec la signature"><p>Boussé SAMASSA</p></div></div>
+    </section>
+  </main>
+<script>
+  const $ = id => document.getElementById(id);
+  const money = n => `${Math.round(n).toLocaleString('fr-FR')} FCFA`;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  function addItem(data = {}) {
+    const row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = `<input class="description" placeholder="Ex. Ordinateur portable HP 15" value="${escapeHtml(data.description || '')}"><input class="serial" placeholder="Référence / série" value="${escapeHtml(data.serial || '')}"><input class="qty" type="number" min="1" step="1" value="${data.qty || 1}"><input class="price" type="number" min="0" step="1" placeholder="0" value="${data.price || ''}"><input class="discount" type="number" min="0" max="100" step="0.01" value="${data.discount || 0}"><span class="line-total">0 FCFA</span><button class="remove" type="button" title="Supprimer">×</button>`;
+    row.querySelector('.remove').onclick = () => { if (document.querySelectorAll('.item').length > 1) row.remove(); else alert('Gardez au moins un article.'); };
+    row.querySelectorAll('input').forEach(input => input.addEventListener('input', updateLines)); $('items').appendChild(row); updateLines();
+  }
+  function updateLines() { document.querySelectorAll('.item').forEach(row => { const q = +row.querySelector('.qty').value || 0, p = +row.querySelector('.price').value || 0, d = +row.querySelector('.discount').value || 0; row.dataset.total = q * p * (1 - d / 100); row.querySelector('.line-total').textContent = money(+row.dataset.total); }); }
+  function collect() { updateLines(); return [...document.querySelectorAll('.item')].map(row => ({ description: row.querySelector('.description').value.trim() || 'Article informatique', serial: row.querySelector('.serial').value.trim() || '—', qty: +row.querySelector('.qty').value || 0, price: +row.querySelector('.price').value || 0, discount: +row.querySelector('.discount').value || 0, total: +row.dataset.total || 0 })); }
+  function generate() { const items = collect(), subtotal = items.reduce((sum, item) => sum + item.total, 0), rate = +$('tax').value || 0, tax = subtotal * rate / 100; $('outNumber').textContent = $('number').value || '—'; $('outDate').textContent = $('date').value ? new Date(`${$('date').value}T12:00:00`).toLocaleDateString('fr-FR') : '—'; $('outPayment').textContent = $('payment').value; $('outClient').textContent = $('client').value || 'Client comptoir'; $('outPhone').textContent = $('phone').value; $('outAddress').textContent = $('address').value; $('outTaxRate').textContent = rate; $('outSubtotal').textContent = money(subtotal); $('outTax').textContent = money(tax); $('outTotal').textContent = money(subtotal + tax); $('outItems').innerHTML = items.map(item => `<tr><td>${escapeHtml(item.description)}</td><td>${escapeHtml(item.serial)}</td><td>${item.qty}</td><td>${money(item.price)}</td><td>${item.discount ? item.discount + ' %' : '—'}</td><td>${money(item.total)}</td></tr>`).join(''); $('invoice').classList.add('show'); $('invoice').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  function save() { const data = { number: $('number').value, date: $('date').value, payment: $('payment').value, client: $('client').value, phone: $('phone').value, tax: $('tax').value, address: $('address').value, items: collect(), savedAt: new Date().toISOString() }; localStorage.setItem('samassa_facture_materiel_brouillon', JSON.stringify(data)); alert('Brouillon enregistré sur cet appareil.'); }
+  $('date').value = new Date().toISOString().slice(0, 10); $('add').onclick = () => addItem(); $('generate').onclick = generate; $('print').onclick = () => { if (!$('invoice').classList.contains('show')) generate(); window.print(); }; $('save').onclick = save; addItem({ description: 'Ordinateur portable', serial: '', qty: 1, price: 0 });
+</script>
+</body>
+</html>

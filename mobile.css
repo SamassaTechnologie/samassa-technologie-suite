@@ -1,0 +1,225 @@
+/* ============================================================
+   SAMASSA TECHNOLOGIE — mobile.css v2.0
+   Fix scroll Android (MIUI/HyperOS) + iOS
+   ============================================================ */
+
+/* ── Touch action global : autoriser le scroll vertical partout ── */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+  /* NE PAS mettre touch-action:none ni -webkit-touch-callout:none globalement */
+}
+
+/* ── Empêcher le zoom au tap sur les inputs (iOS uniquement) ── */
+input, select, textarea {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+button {
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+/* ── Zone sûre pour iPhone avec encoche ── */
+body {
+  padding-top:    env(safe-area-inset-top, 0px);
+  padding-left:   env(safe-area-inset-left, 0px);
+  padding-right:  env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* IMPORTANT Android : ne pas bloquer le scroll avec overscroll-behavior ici */
+}
+
+/* ── html : permettre le scroll natif Android ── */
+html {
+  /* overscroll-behavior-y: none causait le blocage sur Android MIUI */
+  overscroll-behavior-y: contain; /* contain = pas de pull-to-refresh sans bloquer le scroll */
+  height: 100%;
+}
+
+/* ── Topbar ── */
+.topbar {
+  padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ── MOBILE : Layout et form-panel scrollables ── */
+@media (max-width: 768px) {
+
+  /* === FIX SCROLL ANDROID : layout en colonne normale === */
+  .layout {
+    grid-template-columns: 1fr !important;
+    padding: 12px !important;
+    gap: 14px !important;
+    overflow: visible !important;  /* évite tout containment du scroll */
+  }
+
+  /* === FIX CRITIQUE : form-panel ne doit PAS être sticky ni overflow:hidden === */
+  .form-panel {
+    position: static !important;        /* retire le sticky qui bloquait le scroll */
+    max-height: none !important;        /* retire la hauteur fixe */
+    overflow: visible !important;       /* CLEF : autorise le contenu à déborder naturellement */
+    overflow-y: visible !important;     /* Android : le scroll de la PAGE prend le relais */
+    height: auto !important;
+    border-radius: 12px !important;
+    /* Pas de -webkit-overflow-scrolling ici, c'est la page entière qui scrolle */
+  }
+
+  /* === La page elle-même est scrollable === */
+  body {
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    height: auto !important;
+    min-height: 100vh;
+  }
+
+  /* === doc-panel : normal flow === */
+  .doc-panel {
+    position: static !important;
+    border-radius: 12px !important;
+  }
+
+  .doc-inner {
+    padding: 20px !important;
+  }
+
+  /* === Boutons d'action plus grands pour les doigts === */
+  .actions {
+    padding: 12px 14px !important;
+    gap: 8px !important;
+    flex-wrap: wrap;
+    position: sticky !important;       /* actions restent visibles en bas */
+    bottom: 0;
+    background: white;
+    z-index: 10;
+    border-top: 1px solid #E2ECF5;
+    box-shadow: 0 -4px 16px rgba(10,22,40,.08);
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+    justify-content: center;
+    border-radius: 10px !important;
+    touch-action: manipulation;
+  }
+
+  /* Items de formulaire */
+  .item-inputs {
+    grid-template-columns: 1fr 50px 80px !important;
+  }
+  .item-inputs input:nth-child(4) {
+    display: none !important;
+  }
+
+  /* Totaux */
+  .totals-wrap { justify-content: stretch !important; }
+  .totals-box  { width: 100% !important; }
+
+  /* Paiements en 2 colonnes */
+  .payment-methods { grid-template-columns: 1fr 1fr !important; }
+  .pm-option { padding: 8px !important; }
+
+  /* Stats grid */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .stat-val   { font-size: 18px !important; }
+
+  /* Modules 2 colonnes */
+  .modules-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .mod-top      { height: 64px !important; font-size: 30px !important; }
+  .mod-name     { font-size: 13px !important; }
+  .mod-desc     { display: none !important; }
+
+  /* Mouvements form */
+  .mv-form {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .mv-form > *:nth-child(1),
+  .mv-form > *:nth-child(3) { grid-column: span 2 !important; }
+
+  /* Header */
+  .header-inner { padding: 10px 14px !important; gap: 10px !important; }
+  .brand h1     { font-size: 15px !important; }
+  .brand p      { display: none; }
+
+  /* Login card */
+  .login-card  { border-radius: 16px !important; }
+  .card-header { padding: 24px 20px 18px !important; }
+  .card-body   { padding: 20px !important; }
+
+  /* Nav tabs scroll horizontal */
+  .nav-tabs-inner {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .nav-tabs-inner::-webkit-scrollbar { display: none; }
+  .nav-tab { font-size: 12px !important; padding: 10px 14px !important; white-space: nowrap; }
+
+  /* Quick services cyber : 2 colonnes */
+  .quick-services { grid-template-columns: 1fr 1fr !important; }
+
+  /* Modals de paiement marchands */
+  #merchant-pay-modal > div,
+  #merchant-settings-modal > div {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ── iPhone SE et petits écrans ── */
+@media (max-width: 375px) {
+  .stats-grid    { grid-template-columns: 1fr !important; }
+  .modules-grid  { grid-template-columns: 1fr 1fr !important; }
+  .pm-row        { grid-template-columns: 1fr 1fr !important; }
+  .form-grid     { grid-template-columns: 1fr !important; }
+  .form-group.span2 { grid-column: span 1 !important; }
+}
+
+/* ── Formulaires sur mobile : spacing confortable ── */
+@media (max-width: 768px) {
+  input, select, textarea {
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    border-width: 1.5px !important;
+  }
+  label { font-size: 12px !important; margin-bottom: 5px !important; }
+
+  .section-label {
+    margin: 14px 0 8px !important;
+    font-size: 10px !important;
+  }
+
+  #logout-btn {
+    padding: 5px 9px !important;
+    font-size: 11px !important;
+  }
+
+  .install-btn {
+    padding: 7px 12px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ── Impression ── */
+@media print {
+  .topbar, .actions, #logout-btn, .install-btn, #fb-banner { display: none !important; }
+  body { padding: 0 !important; }
+}
+
+/* ── Animations réduites (accessibilité) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

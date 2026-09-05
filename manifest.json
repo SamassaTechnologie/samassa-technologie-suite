@@ -1,9 +1,74 @@
 {
-  "name": "Samassa Technologie",
-  "short_name": "Samassa",
+  "name": "SAMASSA TECHNOLOGIE — Suite Pro",
+  "short_name": "Samassa Pro",
+  "description": "Suite de gestion documentaire : Factures, Reçus, Devis, Interventions et Caisse",
   "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "icons": [{"src": "icon-512x512.png", "sizes": "512x512", "type": "image/png"}]
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0A1628",
+  "theme_color": "#0A1628",
+  "lang": "fr",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle Facture",
+      "short_name": "Facture",
+      "url": "facture.html",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Nouveau Reçu",
+      "short_name": "Reçu",
+      "url": "recu.html",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Nouveau Devis",
+      "short_name": "Devis",
+      "url": "devis.html",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Fiche Intervention",
+      "short_name": "Intervention",
+      "url": "intervention.html",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Documents Admin",
+      "short_name": "Doc Admin",
+      "url": "docs_admin.html",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

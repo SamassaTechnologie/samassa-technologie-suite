@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Documents Administratifs — SAMASSA TECHNOLOGIE</title>
+<meta name="theme-color" content="#0D1B2A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-512x512.png">
+<link rel="apple-touch-icon" href="icon-512x512.png">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mobile.css">
+<style>
+/* ═══════════════════════════════
+   THÈME VIOLET (cohérent cyber)
+═══════════════════════════════ */
+:root{
+  --indigo:#4338CA;--indigo-dark:#3730A3;--indigo-light:#EEF2FF;
+  --indigo-mid:#6366F1;
+}
+
+.panel-header{background:linear-gradient(135deg,#1E1B4B,#3730A3)}
+.panel-header p{color:#A5B4FC}
+
+/* ═══════════════════════════════
+   SÉLECTEUR DE DOCUMENT
+═══════════════════════════════ */
+.doc-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.doc-type-btn{
+  padding:9px 8px;border:1.5px solid var(--border);
+  border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;
+  color:var(--text2);background:white;text-align:left;
+  font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:7px;
+  line-height:1.2;
+}
+.doc-type-btn:hover{border-color:var(--indigo);background:var(--indigo-light);color:var(--indigo)}
+.doc-type-btn.selected{border-color:var(--indigo);background:var(--indigo-light);color:var(--indigo);border-width:2px}
+.doc-type-icon{font-size:16px;flex-shrink:0}
+.doc-cat-label{
+  font-size:10px;font-weight:800;color:var(--indigo);
+  text-transform:uppercase;letter-spacing:.08em;
+  margin:14px 0 7px;padding-bottom:5px;
+  border-bottom:2px solid var(--indigo-light);
+}
+
+/* ═══════════════════════════════
+   FORMULAIRE
+═══════════════════════════════ */
+.form-section{display:none}
+.form-section.active{display:block}
+.field-group{margin-bottom:11px}
+.field-group label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px}
+.field-group input,.field-group select,.field-group textarea{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:13px;font-family:inherit;
+  color:var(--text);background:white;outline:none;transition:border-color .2s;
+}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{border-color:var(--indigo)}
+.field-group textarea{resize:vertical;min-height:62px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row .field-group{margin-bottom:0}
+
+/* Boutons actions */
+.btn-gen{background:var(--indigo);color:white;border:none;padding:11px 18px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:8px;width:100%;justify-content:center}
+.btn-gen:hover{background:var(--indigo-dark);transform:translateY(-1px)}
+.btn-gen:disabled{background:#A5B4FC;cursor:not-allowed;transform:none}
+.btn-gen.loading{animation:btnPulse 1s infinite}
+@keyframes btnPulse{0%,100%{opacity:1}50%{opacity:.7}}
+.btn-print{background:var(--navy);color:white}
+.btn-print:hover{background:#0A2030}
+.btn-save{background:var(--green);color:white}
+.btn-save:hover{background:#15803D}
+.btn-pdf{background:#DC2626;color:white}
+.btn-pdf:hover{background:#B91C1C}
+
+/* ═══════════════════════════════
+   APERÇU DOCUMENT
+═══════════════════════════════ */
+.doc-preview{background:white;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);min-height:500px}
+.preview-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:500px;color:var(--text3);gap:12px}
+.preview-placeholder .ph-icon{font-size:60px;opacity:.2}
+
+/* Document A4 simulé */
+.doc-a4{
+  background:white;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:12px;
+  line-height:1.6;
+  color:#1a1a1a;
+  padding:32px 36px;
+  position:relative;
+}
+.doc-a4-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding-bottom:16px;margin-bottom:20px;
+  border-bottom:3px solid #0D1B2A;
+}
+.doc-logo-wrap{display:flex;align-items:center;gap:12px}
+.doc-logo{width:60px;height:60px;object-fit:contain;border-radius:50%;background:#F0F5FA;padding:4px}
+.doc-co-name{font-size:16px;font-weight:900;color:#0D1B2A;letter-spacing:.3px}
+.doc-co-sub{font-size:10px;color:#0088CC;font-style:italic;margin-bottom:4px}
+.doc-co-detail{font-size:10px;color:#4A6080;line-height:1.5}
+.doc-ref-block{text-align:right}
+.doc-ref-num{font-size:11px;color:#8099B0}
+.doc-ref-num strong{color:#4338CA}
+.doc-ref-date{font-size:10px;color:#8099B0;margin-top:2px}
+.doc-title{
+  text-align:center;margin-bottom:22px;
+}
+.doc-title h2{
+  font-size:16px;font-weight:900;color:#0D1B2A;
+  text-transform:uppercase;letter-spacing:2px;
+  padding:10px 20px;display:inline-block;
+  border-top:2px solid #0D1B2A;border-bottom:2px solid #0D1B2A;
+}
+.doc-body{
+  font-size:12px;line-height:1.8;color:#1a1a1a;
+  margin-bottom:24px;white-space:pre-wrap;
+}
+.doc-sig-area{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-top:36px;padding-top:16px;border-top:1px dashed #D0DDE8;
+}
+.sig-block{text-align:center}
+.sig-title{font-size:11px;font-weight:700;color:#4A6080;text-decoration:underline;margin-bottom:8px}
+.sig-img{width:120px;height:auto;display:block;margin:0 auto 4px}
+.cachet-img{width:80px;height:auto;opacity:.90;transform:rotate(-12deg);display:block;margin:0 auto 4px;filter:brightness(0) saturate(100%) invert(27%) sepia(84%) saturate(1220%) hue-rotate(172deg) brightness(98%) contrast(103%)}
+.sig-name{font-size:11px;font-weight:700;font-style:italic;color:#1a1a1a}
+.client-sig-box{border:1px dashed #D0DDE8;border-radius:6px;padding:12px;min-width:180px;min-height:70px;text-align:center}
+.client-sig-label{font-size:10px;color:#8099B0;font-weight:700}
+.doc-footer-line{
+  margin-top:22px;padding-top:10px;border-top:1px solid #E2EAF0;
+  text-align:center;font-size:10px;color:#8099B0;line-height:1.5;
+}
+
+/* ═══════════════════════════════
+   HISTORIQUE
+═══════════════════════════════ */
+.hist-item{
+  display:flex;align-items:center;gap:12px;padding:11px 18px;
+  border-bottom:1px solid #F4F8FB;transition:background .15s;cursor:pointer;
+}
+.hist-item:last-child{border-bottom:none}
+.hist-item:hover{background:var(--bg2)}
+.hist-ico{width:36px;height:36px;border-radius:9px;background:var(--indigo-light);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hist-info{flex:1;min-width:0}
+.hist-type{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-client{font-size:11px;color:var(--text3);margin-top:1px}
+.hist-meta{text-align:right;flex-shrink:0}
+.hist-num{font-size:12px;font-weight:700;color:var(--indigo)}
+.hist-date{font-size:10px;color:var(--text3);margin-top:2px}
+.hist-reprint{font-size:11px;background:var(--indigo-light);color:var(--indigo);border:1px solid #C7D2FE;border-radius:6px;padding:3px 9px;cursor:pointer;font-family:inherit;font-weight:600;margin-top:4px;transition:all .15s}
+.hist-reprint:hover{background:var(--indigo);color:white}
+
+/* ═══════════════════════════════
+   LOADING SPINNER
+═══════════════════════════════ */
+.ai-loading{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:400px;gap:16px;color:var(--text2);
+}
+.spinner{width:44px;height:44px;border:4px solid #E0E7FF;border-top-color:var(--indigo);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-loading p{font-size:14px;font-weight:600;color:var(--indigo)}
+.ai-loading small{font-size:12px;color:var(--text3)}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:16px;padding:12px 18px;background:var(--indigo-light);border-radius:10px;margin-bottom:16px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-n{font-size:20px;font-weight:800;color:var(--indigo);line-height:1}
+.stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+/* ═══════════════════════════════
+   TABS
+═══════════════════════════════ */
+.tab-bar{display:flex;gap:0;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:16px}
+.tab-btn{flex:1;padding:9px;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);font-family:inherit;transition:all .2s}
+.tab-btn.active{background:var(--indigo);color:white}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ═══════════════════════════════
+   PRINT
+═══════════════════════════════ */
+@media print{
+  .topbar,.form-panel,.preview-actions,
+  .tab-bar,.stats-bar,
+  .doc-preview > .preview-placeholder{display:none!important}
+  .layout{display:block;padding:0;max-width:none}
+  .doc-preview{border:none;box-shadow:none;border-radius:0}
+  .doc-a4{padding:10mm 15mm}
+  body{background:white}
+}
+@media(max-width:600px){
+  .doc-type-grid{grid-template-columns:1fr}
+  .field-row{grid-template-columns:1fr}
+}
+
+.toast-doc{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;color:white;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);animation:toastIn .3s ease}
+.toast-doc.success{background:#16A34A}.toast-doc.error{background:#DC2626}.toast-doc.info{background:#0088CC}
+@keyframes toastIn{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="back-link">← Retour</a>
+  <span class="topbar-title">📝 Documents Administratifs</span>
+  <img src="logo.png" alt="Logo" class="topbar-logo">
+</div>
+
+<div class="layout">
+
+  <!-- ════════════════════════════════════
+       PANNEAU GAUCHE : Formulaire
+  ════════════════════════════════════ -->
+  <div class="form-panel">
+    <div class="panel-header">
+      <h2>📝 Générateur de Documents</h2>
+      <p>Documents administratifs conformes aux normes maliennes</p>
+    </div>
+    <div class="form-body">
+
+      <!-- ONGLETS -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('creer')">✏️ Créer</button>
+        <button class="tab-btn" onclick="switchTab('historique')">🕐 Historique</button>
+      </div>
+
+      <!-- ════ ONGLET CRÉER ════ -->
+      <div class="tab-content active" id="tab-creer">
+
+        <!-- Stats rapides -->
+        <div class="stats-bar">
+          <div class="stat-item"><div class="stat-n" id="stat-total">0</div><div class="stat-l">Générés</div></div>
+          <div class="stat-item"><div class="stat-n" id="stat-today">0</div><div class="stat-l">Aujourd'hui</div></div>
+          <div class="stat-item"><div class="stat-n">17</div><div class="stat-l">Modèles</div></div>
+        </div>
+
+        <!-- Sélection type -->
+        <div class="section-label" style="color:var(--indigo);border-bottom-color:var(--indigo-light)">Type de document</div>
+
+        <div class="doc-cat-label">📋 État Civil & Identité</div>
+        <div class="doc-type-grid">
+          <button class="doc-type-btn" onclick="selectDoc('acte_naissance')" id="btn-acte_naissance"><span class="doc-type-icon">🏛️</span>Demande Acte de Naissance</button>
+          <button class="doc-type-btn" onclick="selectDoc('carte_id')" id="btn-carte_id"><span class="doc-type-icon">🪪</span>Demande Carte d'Identité</button>
+          <button class="doc-type-btn" onclick="selectDoc('declaration_perte')" id="btn-declaration_perte"><span class="doc-type-icon">🔍</span>Déclaration de Perte</button>
+          <button class="doc-type-btn" onclick="selectDoc('passeport')" id="btn-passeport"><span class="doc-type-icon">✈️</span>Demande Passeport</button>
+        </div>
+
+        <div class="doc-cat-label">🏠 Domicile & Résidence</div>
+        <div class="doc-type-grid">
+          <button class="doc-type-btn" onclick="selectDoc('domicile')" id="btn-domicile"><span class="doc-type-icon">🏘️</span>Attestation de Domicile</button>
+          <button class="doc-type-btn" onclick="selectDoc('bail')" id="btn-bail"><span class="doc-type-icon">🔑</span>Contrat de Bail</button>
+          <button class="doc-type-btn" onclick="selectDoc('connexion')" id="btn-connexion"><span class="doc-type-icon">📶</span>Demande Connexion Internet</button>
+          <button class="doc-type-btn" onclick="selectDoc('reclamation')" id="btn-reclamation"><span class="doc-type-icon">⚡</span>Réclamation Service Public</button>
+        </div>
+
+        <div class="doc-cat-label">💼 Emploi & Travail</div>
+        <div class="doc-type-grid">
+          <button class="doc-type-btn" onclick="selectDoc('certificat_travail')" id="btn-certificat_travail"><span class="doc-type-icon">📋</span>Certificat de Travail</button>
+          <button class="doc-type-btn" onclick="selectDoc('bonne_vie')" id="btn-bonne_vie"><span class="doc-type-icon">⚖️</span>Certificat Bonne Vie & Mœurs</button>
+          <button class="doc-type-btn" onclick="selectDoc('demande_emploi')" id="btn-demande_emploi"><span class="doc-type-icon">💼</span>Demande d'Emploi</button>
+          <button class="doc-type-btn" onclick="selectDoc('cv')" id="btn-cv"><span class="doc-type-icon">📄</span>CV Professionnel</button>
+        </div>
+
+        <div class="doc-cat-label">📜 Actes & Juridique</div>
+        <div class="doc-type-grid">
+          <button class="doc-type-btn" onclick="selectDoc('vente')" id="btn-vente"><span class="doc-type-icon">🤝</span>Attestation de Vente</button>
+          <button class="doc-type-btn" onclick="selectDoc('procuration')" id="btn-procuration"><span class="doc-type-icon">📑</span>Demande de Procuration</button>
+          <button class="doc-type-btn" onclick="selectDoc('retrait_plainte')" id="btn-retrait_plainte"><span class="doc-type-icon">🏛️</span>Retrait de Plainte</button>
+          <button class="doc-type-btn" onclick="selectDoc('lettre_motivation')" id="btn-lettre_motivation"><span class="doc-type-icon">✉️</span>Lettre de Motivation</button>
+        </div>
+
+        <div class="doc-cat-label">🤲 Social & Aide</div>
+        <div class="doc-type-grid">
+          <button class="doc-type-btn" onclick="selectDoc('aide_sociale')" id="btn-aide_sociale"><span class="doc-type-icon">🤲</span>Demande d'Aide Sociale</button>
+        </div>
+
+        <!-- ════ FORMULAIRES DYNAMIQUES ════ -->
+        <div id="form-container" style="display:none">
+          <div class="section-label" style="margin-top:16px;color:var(--indigo);border-bottom-color:var(--indigo-light)" id="form-title">Informations du document</div>
+
+          <!-- Champs communs -->
+          <div class="field-group">
+            <label>Nom complet du demandeur *</label>
+            <input type="text" id="f-nom" placeholder="Ex: Moussa COULIBALY" autocomplete="name">
+          </div>
+
+          <!-- Sections spécifiques par document -->
+          <div id="fields-specific"></div>
+
+          <div class="field-row" style="margin-bottom:11px">
+            <div class="field-group">
+              <label>Lieu *</label>
+              <input type="text" id="f-lieu" value="Kayes" placeholder="Ville">
+            </div>
+            <div class="field-group">
+              <label>Date du document</label>
+              <input type="date" id="f-date">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Téléphone</label>
+            <input type="tel" id="f-tel" placeholder="+223 XX XX XX XX">
+          </div>
+
+          <div class="field-group">
+            <label>Informations complémentaires</label>
+            <textarea id="f-complement" placeholder="Précisions supplémentaires (optionnel)..." rows="2"></textarea>
+          </div>
+
+          <!-- Bouton générer -->
+          <button class="btn btn-generate btn-gen" id="btn-generer" onclick="generateDocument()" style="margin-top:8px">
+            ✨ Générer le document
+          </button>
+        </div>
+
+      </div><!-- /tab-creer -->
+
+      <!-- ════ ONGLET HISTORIQUE ════ -->
+      <div class="tab-content" id="tab-historique-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-size:13px;font-weight:700;color:var(--text)">Documents générés</span>
+          <button onclick="clearDocHistory()" style="background:none;border:1px solid var(--border);color:var(--red);padding:5px 10px;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">🗑 Effacer</button>
+        </div>
+        <div id="hist-list"></div>
+      </div>
+
+    </div><!-- /form-body -->
+
+    <div class="actions" id="preview-actions" style="display:none">
+      <button class="btn btn-print" onclick="printDoc()">🖨️ Imprimer</button>
+      <button class="btn btn-save" onclick="saveToHistory()">💾 Enregistrer</button>
+      <button class="btn btn-wa" onclick="shareWhatsApp()">💬 WhatsApp</button>
+    </div>
+
+  </div><!-- /form-panel -->
+
+  <!-- ════════════════════════════════════
+       PANNEAU DROIT : Aperçu document
+  ════════════════════════════════════ -->
+  <div class="doc-preview" id="doc-preview">
+    <div class="preview-placeholder" id="preview-placeholder">
+      <div class="ph-icon">📝</div>
+      <p style="font-size:14px;font-weight:600;color:var(--text2)">Sélectionnez un type de document</p>
+      <p style="font-size:12px;text-align:center;max-width:260px">Remplissez le formulaire et cliquez sur<br><strong>✨ Générer le document</strong></p>
+    </div>
+
+    <!-- Chargement IA -->
+    <div class="ai-loading" id="ai-loading" style="display:none">
+      <div class="spinner"></div>
+      <p>Génération en cours...</p>
+      <small id="ai-loading-msg">L'IA rédige votre document administratif</small>
+    </div>
+
+    <!-- Contenu A4 généré -->
+    <div class="doc-a4" id="doc-a4-content" style="display:none">
+
+      <!-- EN-TÊTE : numéro de référence et date uniquement -->
+      <div class="doc-a4-header" style="justify-content:flex-end;border-bottom:2px solid #0D1B2A;margin-bottom:20px">
+        <div class="doc-ref-block">
+          <div class="doc-ref-num">Réf : <strong id="d-ref-num">DA-001</strong></div>
+          <div class="doc-ref-date">📅 <span id="d-ref-date"></span></div>
+          <div class="doc-ref-date" style="margin-top:3px">📍 Kayes, Mali</div>
+        </div>
+      </div>
+
+      <!-- TITRE -->
+      <div class="doc-title">
+        <h2 id="d-title">DOCUMENT ADMINISTRATIF</h2>
+      </div>
+
+      <!-- CORPS DU DOCUMENT (généré par IA) -->
+      <div class="doc-body" id="d-body">
+        <!-- Texte généré ici -->
+      </div>
+
+      <!-- SIGNATURES -->
+      <div class="doc-sig-area">
+        <div class="client-sig-box">
+          <div class="client-sig-label">Signature du demandeur</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px;font-style:italic">Lu et approuvé</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-title">L'Autorité compétente</div>
+          <div style="width:120px;height:50px;border-bottom:1px solid #D0DDE8;margin:8px auto 4px"></div>
+          <div class="sig-name">Signature et Cachet</div>
+        </div>
+      </div>
+
+    </div><!-- /doc-a4 -->
+  </div><!-- /doc-preview -->
+
+</div><!-- /layout -->
+
+<script src="auth.js"></script>
+<script src="firebase-config.js"></script>
+<script src="sync.js"></script>
+<script src="utils.js"></script>
+<script>
+/* ════════════════════════════════════════════
+   CONFIG DOCUMENTS : champs spécifiques
+════════════════════════════════════════════ */
+const DOC_CONFIG = {
+  acte_naissance: {
+    title: "DEMANDE D'ACTE DE NAISSANCE",
+    icon: "🏛️",
+    fields: [
+      {id:'f-date-naiss',  label:'Date de naissance',   type:'date'},
+      {id:'f-lieu-naiss',  label:'Lieu de naissance',   type:'text', placeholder:'Ex: Kayes'},
+      {id:'f-pere',        label:'Nom du père',          type:'text', placeholder:'Prénom et nom'},
+      {id:'f-mere',        label:'Nom de la mère',       type:'text', placeholder:'Prénom et nom de jeune fille'},
+      {id:'f-adresse',     label:'Adresse actuelle',     type:'text', placeholder:'Quartier, Ville'},
+      {id:'f-motif',       label:'Motif de la demande',  type:'text', placeholder:'Ex: Scolarisation, visa...'},
+    ]
+  },
+  carte_id: {
+    title: "DEMANDE DE CARTE NATIONALE D'IDENTITÉ",
+    icon: "🪪",
+    fields: [
+      {id:'f-date-naiss',  label:'Date de naissance',   type:'date'},
+      {id:'f-lieu-naiss',  label:'Lieu de naissance',   type:'text', placeholder:'Commune'},
+      {id:'f-pere',        label:'Nom du père',          type:'text', placeholder:'Prénom et nom'},
+      {id:'f-mere',        label:'Nom de la mère',       type:'text', placeholder:'Prénom et nom'},
+      {id:'f-adresse',     label:'Adresse complète',     type:'text', placeholder:'Quartier, commune'},
+      {id:'f-profession',  label:'Profession',           type:'text', placeholder:'Ex: Commerçant'},
+    ]
+  },
+  declaration_perte: {
+    title: "DÉCLARATION DE PERTE DE DOCUMENT",
+    icon: "🔍",
+    fields: [
+      {id:'f-doc-perdu',   label:'Document perdu',       type:'text', placeholder:'Ex: Carte NINA, Passeport...'},
+      {id:'f-num-doc',     label:'Numéro du document (si connu)', type:'text', placeholder:'N° du document'},
+      {id:'f-date-perte',  label:'Date approximative de la perte', type:'date'},
+      {id:'f-lieu-perte',  label:'Lieu de la perte',     type:'text', placeholder:'Endroit où la perte a été constatée'},
+      {id:'f-circonstances', label:'Circonstances',      type:'textarea', placeholder:'Décrivez comment le document a été perdu...'},
+    ]
+  },
+  passeport: {
+    title: "DEMANDE DE PASSEPORT",
+    icon: "✈️",
+    fields: [
+      {id:'f-date-naiss',  label:'Date de naissance',   type:'date'},
+      {id:'f-lieu-naiss',  label:'Lieu de naissance',   type:'text', placeholder:'Commune'},
+      {id:'f-destination', label:'Pays de destination', type:'text', placeholder:'Ex: France, Sénégal...'},
+      {id:'f-motif',       label:'Motif du voyage',      type:'text', placeholder:'Ex: Études, Médical, Commerce'},
+      {id:'f-garant',      label:'Nom du garant (si applicable)', type:'text', placeholder:'Prénom et nom'},
+      {id:'f-adresse',     label:'Adresse complète',     type:'text', placeholder:'Quartier, commune'},
+    ]
+  },
+  domicile: {
+    title: "ATTESTATION DE DOMICILE",
+    icon: "🏘️",
+    fields: [
+      {id:'f-adresse',     label:'Adresse complète',     type:'text', placeholder:'Quartier, rue, numéro'},
+      {id:'f-commune',     label:'Commune',              type:'text', placeholder:'Ex: Commune I de Kayes'},
+      {id:'f-duree',       label:'Durée de résidence',   type:'text', placeholder:'Ex: 3 ans, depuis 2020'},
+      {id:'f-proprietaire',label:'Nom du propriétaire/Chef de famille', type:'text', placeholder:'Si différent du demandeur'},
+      {id:'f-motif',       label:'Motif de l\'attestation', type:'text', placeholder:'Ex: Ouverture de compte bancaire'},
+    ]
+  },
+  bail: {
+    title: "CONTRAT DE BAIL",
+    icon: "🔑",
+    fields: [
+      {id:'f-bailleur',    label:'Nom du bailleur (propriétaire)', type:'text', placeholder:'Prénom et nom complet'},
+      {id:'f-locataire',   label:'Nom du locataire',     type:'text', placeholder:'Prénom et nom complet'},
+      {id:'f-bien',        label:'Description du bien loué', type:'text', placeholder:'Ex: Maison de 3 pièces, Appartement...'},
+      {id:'f-adresse',     label:'Adresse du bien',      type:'text', placeholder:'Quartier, rue, commune'},
+      {id:'f-loyer',       label:'Montant du loyer mensuel (FCFA)', type:'number', placeholder:'Ex: 50000'},
+      {id:'f-duree',       label:'Durée du bail',        type:'text', placeholder:'Ex: 1 an, 2 ans, indéterminée'},
+      {id:'f-date-debut',  label:'Date de début',        type:'date'},
+    ]
+  },
+  connexion: {
+    title: "DEMANDE DE CONNEXION INTERNET",
+    icon: "📶",
+    fields: [
+      {id:'f-adresse',     label:'Adresse d\'installation', type:'text', placeholder:'Quartier, rue'},
+      {id:'f-type-conn',   label:'Type de connexion demandée', type:'select', options:['Fibre optique','4G/LTE','ADSL','Autre']},
+      {id:'f-duree',       label:'Durée souhaitée',      type:'select', options:['1 mois','3 mois','6 mois','1 an','Sans durée déterminée']},
+      {id:'f-operateur',   label:'Opérateur visé',       type:'select', options:['Orange Mali','Moov Africa','Malitel','Autre']},
+      {id:'f-usage',       label:'Utilisation principale', type:'text', placeholder:'Ex: Domicile, Commerce, Bureau'},
+    ]
+  },
+  reclamation: {
+    title: "LETTRE DE RÉCLAMATION",
+    icon: "⚡",
+    fields: [
+      {id:'f-service',     label:'Service concerné',     type:'select', options:['EDM (Électricité)','SOMAGEP (Eau)','Orange Mali','Moov Africa','La Poste','Autre']},
+      {id:'f-num-contrat', label:'Numéro de contrat/abonné', type:'text', placeholder:'N° figurant sur votre facture'},
+      {id:'f-probleme',    label:'Nature du problème',   type:'textarea', placeholder:'Décrivez le problème rencontré...'},
+      {id:'f-depuis',      label:'Depuis quand ?',       type:'text', placeholder:'Ex: Depuis le 01/01/2025'},
+      {id:'f-demande',     label:'Ce que vous demandez', type:'textarea', placeholder:'Votre demande précise...'},
+    ]
+  },
+  certificat_travail: {
+    title: "CERTIFICAT DE TRAVAIL",
+    icon: "📋",
+    fields: [
+      {id:'f-employeur',   label:'Nom de l\'employeur/entreprise', type:'text', placeholder:'Raison sociale'},
+      {id:'f-poste',       label:'Poste occupé',          type:'text', placeholder:'Ex: Caissier, Technicien...'},
+      {id:'f-date-debut',  label:'Date de début d\'emploi', type:'date'},
+      {id:'f-date-fin',    label:'Date de fin (si applicable)', type:'date'},
+      {id:'f-salaire',     label:'Salaire mensuel (FCFA)', type:'number', placeholder:'Montant net'},
+      {id:'f-motif',       label:'Motif du certificat',   type:'text', placeholder:'Ex: Demande de prêt, Visa...'},
+    ]
+  },
+  bonne_vie: {
+    title: "CERTIFICAT DE BONNE VIE ET MŒURS",
+    icon: "⚖️",
+    fields: [
+      {id:'f-date-naiss',  label:'Date de naissance',   type:'date'},
+      {id:'f-lieu-naiss',  label:'Lieu de naissance',   type:'text', placeholder:'Commune'},
+      {id:'f-profession',  label:'Profession',           type:'text', placeholder:'Ex: Commerçant, Agent...'},
+      {id:'f-adresse',     label:'Adresse actuelle',     type:'text', placeholder:'Quartier, commune'},
+      {id:'f-temoin1',     label:'Témoin 1 (Nom complet)', type:'text', placeholder:'Prénom et nom'},
+      {id:'f-temoin2',     label:'Témoin 2 (Nom complet)', type:'text', placeholder:'Prénom et nom'},
+      {id:'f-motif',       label:'Motif de la demande',  type:'text', placeholder:'Ex: Emploi public, Concours...'},
+    ]
+  },
+  demande_emploi: {
+    title: "DEMANDE D'EMPLOI",
+    icon: "💼",
+    fields: [
+      {id:'f-poste',       label:'Poste visé',           type:'text', placeholder:'Titre du poste'},
+      {id:'f-entreprise',  label:'Nom de l\'entreprise', type:'text', placeholder:'Raison sociale'},
+      {id:'f-competences', label:'Compétences principales', type:'textarea', placeholder:'Vos 3 compétences clés...'},
+      {id:'f-experience',  label:'Expérience (années)',  type:'text', placeholder:'Ex: 5 ans en vente'},
+      {id:'f-formation',   label:'Diplôme / Formation',  type:'text', placeholder:'Ex: BTS Commerce, BAC+2...'},
+    ]
+  },
+  cv: {
+    title: "CURRICULUM VITAE PROFESSIONNEL",
+    icon: "📄",
+    fields: [
+      {id:'f-date-naiss',  label:'Date de naissance',   type:'date'},
+      {id:'f-adresse',     label:'Adresse',              type:'text', placeholder:'Ville, Quartier'},
+      {id:'f-email',       label:'Email',                type:'email', placeholder:'votre@email.com'},
+      {id:'f-formation',   label:'Formations (du plus récent)', type:'textarea', placeholder:'Ex: 2020 - BTS Informatique, IFM Kayes'},
+      {id:'f-experience',  label:'Expériences professionnelles', type:'textarea', placeholder:'Ex: 2021-2023 : Technicien chez...'},
+      {id:'f-competences', label:'Compétences',          type:'textarea', placeholder:'Ex: Word, Excel, Réparation PC...'},
+      {id:'f-langues',     label:'Langues parlées',      type:'text', placeholder:'Ex: Français, Bambara, Anglais'},
+    ]
+  },
+  vente: {
+    title: "ATTESTATION DE VENTE",
+    icon: "🤝",
+    fields: [
+      {id:'f-vendeur',     label:'Nom du vendeur',       type:'text', placeholder:'Prénom et nom complet'},
+      {id:'f-acheteur',    label:'Nom de l\'acheteur',   type:'text', placeholder:'Prénom et nom complet'},
+      {id:'f-objet',       label:'Objet vendu',          type:'text', placeholder:'Ex: Moto Honda 125, Terrain de 200m²...'},
+      {id:'f-prix',        label:'Prix de vente (FCFA)', type:'number', placeholder:'Montant en chiffres'},
+      {id:'f-desc-objet',  label:'Description détaillée', type:'textarea', placeholder:'Caractéristiques, numéro de série...'},
+    ]
+  },
+  procuration: {
+    title: "LETTRE DE PROCURATION",
+    icon: "📑",
+    fields: [
+      {id:'f-mandataire',  label:'Nom du mandataire (celui qui reçoit les pouvoirs)', type:'text', placeholder:'Prénom et nom'},
+      {id:'f-lien',        label:'Lien avec le mandataire', type:'text', placeholder:'Ex: Mon fils, Mon frère...'},
+      {id:'f-pouvoirs',    label:'Pouvoirs accordés',    type:'textarea', placeholder:'Ex: Retirer mes fonds à la banque, Représenter...'},
+      {id:'f-duree',       label:'Durée de validité',    type:'text', placeholder:'Ex: 30 jours, 3 mois, jusqu\'au 31/12/2025'},
+      {id:'f-institution', label:'Institution concernée', type:'text', placeholder:'Ex: Banque BDM, Tribunal, Mairie...'},
+    ]
+  },
+  retrait_plainte: {
+    title: "DÉCLARATION DE RETRAIT DE PLAINTE",
+    icon: "🏛️",
+    fields: [
+      {id:'f-commissariat', label:'Commissariat / Tribunal', type:'text', placeholder:'Ex: Commissariat de Police de Kayes'},
+      {id:'f-mis-en-cause', label:'Nom de la personne mise en cause', type:'text', placeholder:'Prénom et nom'},
+      {id:'f-ref-affaire',  label:'Référence de l\'affaire (si connue)', type:'text', placeholder:'N° PV ou dossier'},
+      {id:'f-motif',        label:'Motif du retrait',     type:'textarea', placeholder:'Expliquez pourquoi vous retirez la plainte...'},
+    ]
+  },
+  lettre_motivation: {
+    title: "LETTRE DE MOTIVATION",
+    icon: "✉️",
+    fields: [
+      {id:'f-poste',       label:'Poste visé',           type:'text', placeholder:'Titre exact du poste'},
+      {id:'f-entreprise',  label:'Entreprise / Structure', type:'text', placeholder:'Nom de l\'organisation'},
+      {id:'f-competences', label:'Vos points forts',     type:'textarea', placeholder:'Compétences et qualités pertinentes...'},
+      {id:'f-experience',  label:'Expérience pertinente', type:'text', placeholder:'Bref résumé de votre parcours'},
+      {id:'f-motivation',  label:'Votre motivation',     type:'textarea', placeholder:'Pourquoi vous voulez ce poste...'},
+    ]
+  },
+  aide_sociale: {
+    title: "DEMANDE D'AIDE SOCIALE",
+    icon: "🤲",
+    fields: [
+      {id:'f-situation',   label:'Situation familiale',  type:'text', placeholder:'Ex: Marié(e), 4 enfants'},
+      {id:'f-revenus',     label:'Revenus mensuels (FCFA)', type:'number', placeholder:'0 si sans emploi'},
+      {id:'f-charges',     label:'Charges principales', type:'textarea', placeholder:'Loyer, soins médicaux, scolarité...'},
+      {id:'f-type-aide',   label:'Type d\'aide demandée', type:'text', placeholder:'Ex: Bourse, Aide médicale, Allocations...'},
+      {id:'f-justification', label:'Justification de la demande', type:'textarea', placeholder:'Expliquez votre situation...'},
+    ]
+  },
+};
+
+/* ════════════════════════════════════════════
+   ÉTAT GLOBAL
+════════════════════════════════════════════ */
+let currentDocType = null;
+let generatedContent = null;
+let docCounter = parseInt(localStorage.getItem('samassa_docs_counter') || '0');
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  loadStats();
+  renderHistorique();
+});
+
+/* ════════════════════════════════════════════
+   ONGLETS
+════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', ['creer','historique'][i]===tab));
+  document.getElementById('tab-creer').classList.toggle('active', tab==='creer');
+  document.getElementById('tab-historique-content').classList.toggle('active', tab==='historique');
+  if (tab==='historique') renderHistorique();
+}
+
+/* ════════════════════════════════════════════
+   STATS
+════════════════════════════════════════════ */
+function loadStats() {
+  const hist = JSON.parse(localStorage.getItem('samassa_docs_admin') || '[]');
+  document.getElementById('stat-total').textContent = hist.length;
+  const today = new Date().toISOString().split('T')[0];
+  const todayCount = hist.filter(d => (d.timestamp||'').startsWith(today)).length;
+  document.getElementById('stat-today').textContent = todayCount;
+}
+
+/* ════════════════════════════════════════════
+   SÉLECTION TYPE DE DOCUMENT
+════════════════════════════════════════════ */
+function selectDoc(type) {
+  currentDocType = type;
+  const cfg = DOC_CONFIG[type];
+  if (!cfg) return;
+
+  /* Mettre en évidence le bouton sélectionné */
+  document.querySelectorAll('.doc-type-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-' + type)?.classList.add('selected');
+
+  /* Titre du formulaire */
+  document.getElementById('form-title').textContent = cfg.icon + ' ' + cfg.title;
+
+  /* Générer les champs spécifiques */
+  const container = document.getElementById('fields-specific');
+  container.innerHTML = '';
+  cfg.fields.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'field-group';
+    let input = '';
+    if (f.type === 'textarea') {
+      input = `<textarea id="${f.id}" placeholder="${f.placeholder||''}" rows="2"></textarea>`;
+    } else if (f.type === 'select' && f.options) {
+      input = `<select id="${f.id}"><option value="">— Choisir —</option>${f.options.map(o=>`<option>${o}</option>`).join('')}</select>`;
+    } else {
+      input = `<input type="${f.type||'text'}" id="${f.id}" placeholder="${f.placeholder||''}" ${f.type==='date'?'':''}>`;
+    }
+    div.innerHTML = `<label>${f.label}${f.label.endsWith('*')?'':''}</label>${input}`;
+    container.appendChild(div);
+  });
+
+  document.getElementById('form-container').style.display = 'block';
+
+  /* Scroll vers le formulaire sur mobile */
+  setTimeout(() => document.getElementById('form-container').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+/* ════════════════════════════════════════════
+   GÉNÉRATION IA
+════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   GÉNÉRATION LOCALE — Modèles pré-rédigés
+   Aucune connexion internet requise
+════════════════════════════════════════════ */
+function generateDocument() {
+  if (!currentDocType) { alert('Choisissez un type de document.'); return; }
+  const nom = document.getElementById('f-nom')?.value?.trim();
+  if (!nom) { alert('Le nom du demandeur est obligatoire.'); document.getElementById('f-nom').focus(); return; }
+
+  /* Collecter tous les champs */
+  const cfg = DOC_CONFIG[currentDocType];
+  const data = {
+    nom,
+    lieu:       document.getElementById('f-lieu')?.value  || 'Kayes',
+    date:       document.getElementById('f-date')?.value  || new Date().toISOString().split('T')[0],
+    tel:        document.getElementById('f-tel')?.value   || '',
+    complement: document.getElementById('f-complement')?.value || ''
+  };
+  cfg.fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) data[f.id.replace('f-', '')] = el.value || '';
+  });
+
+  /* Animation courte */
+  document.getElementById('preview-placeholder').style.display = 'none';
+  document.getElementById('doc-a4-content').style.display = 'none';
+  document.getElementById('ai-loading').style.display = 'flex';
+  document.getElementById('preview-actions').style.display = 'none';
+  document.getElementById('ai-loading-msg').textContent = 'Rédaction du document en cours...';
+
+  const btn = document.getElementById('btn-generer');
+  btn.disabled = true;
+  btn.textContent = '⏳ Génération...';
+
+  /* Génération locale (pseudo-async pour l'animation) */
+  setTimeout(() => {
+    try {
+      const docText = buildDocumentText(currentDocType, data);
+      docCounter++;
+      localStorage.setItem('samassa_docs_counter', String(docCounter));
+      const refNum = 'DA-' + String(docCounter).padStart(4, '0');
+
+      document.getElementById('d-title').textContent = cfg.title;
+      document.getElementById('d-ref-num').textContent = refNum;
+      document.getElementById('d-ref-date').textContent = fmtDateLong(data.date);
+      document.getElementById('d-body').textContent = docText;
+
+      generatedContent = { type: currentDocType, refNum, title: cfg.title, nom, data, text: docText, timestamp: new Date().toISOString() };
+
+      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('doc-a4-content').style.display = 'block';
+      document.getElementById('preview-actions').style.display = 'flex';
+      document.getElementById('doc-a4-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('preview-placeholder').style.display = 'flex';
+      alert('Erreur : ' + err.message);
+    }
+    btn.disabled = false;
+    btn.innerHTML = '✨ Générer le document';
+  }, 900);
+}
+
+/* ── Formateur de date longue ── */
+function fmtDateLong(dateStr) {
+  try {
+    return new Date(dateStr).toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  } catch { return dateStr || new Date().toLocaleDateString('fr-FR'); }
+}
+function fmtDateShort(dateStr) {
+  try { return new Date(dateStr).toLocaleDateString('fr-FR'); } catch { return dateStr || ''; }
+}
+function or(val, def) { return (val && val.trim()) ? val.trim() : (def || '—'); }
+
+/* ════════════════════════════════════════════
+   MODÈLES LOCAUX — 17 TEMPLATES COMPLETS
+════════════════════════════════════════════ */
+function buildDocumentText(type, d) {
+  const LIEU = or(d.lieu, 'Kayes');
+  const DATE = fmtDateLong(d.date);
+  const NOM  = or(d.nom, 'Le/La soussigné(e)');
+  const TEL  = d.tel ? `\nTéléphone : ${d.tel}` : '';
+  const COMP = d.complement ? `\n\nInformations complémentaires :\n${d.complement}` : '';
+
+  const templates = {
+
+    /* 1. ACTE DE NAISSANCE */
+    acte_naissance: () => `Monsieur le Chef du Centre d'État Civil de ${LIEU},
+
+Je soussigné(e) ${NOM}, né(e) le ${fmtDateShort(d['date-naiss'])} à ${or(d['lieu-naiss'], LIEU)},
+demeurant à ${or(d.adresse, LIEU)}${TEL},
+
+ai l'honneur de solliciter auprès de votre service la délivrance d'un extrait d'acte de naissance me concernant.
+
+INFORMATIONS D'ÉTAT CIVIL :
+  - Nom et Prénom   : ${NOM}
+  - Date de naissance  : ${fmtDateShort(d['date-naiss'])}
+  - Lieu de naissance  : ${or(d['lieu-naiss'], LIEU)}
+  - Nom du père         : ${or(d.pere, '—')}
+  - Nom de la mère      : ${or(d.mere, '—')}
+  - Adresse actuelle    : ${or(d.adresse, LIEU)}
+
+MOTIF DE LA DEMANDE :
+  ${or(d.motif, 'Usage administratif et personnel')}
+${COMP}
+
+Dans l'espoir d'une suite favorable à ma requête, je vous prie d'agréer, Monsieur le Chef du Centre d'État Civil, l'expression de ma haute considération.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La demandeur(se)`,
+
+    /* 2. CARTE D'IDENTITÉ */
+    carte_id: () => `Monsieur le Commissaire de Police,
+Chef du Service d'État Civil de ${LIEU},
+
+Je soussigné(e) ${NOM}, né(e) le ${fmtDateShort(d['date-naiss'])} à ${or(d['lieu-naiss'], LIEU)},
+de nationalité malienne, demeurant à ${or(d.adresse, LIEU)},
+exerçant la profession de ${or(d.profession, '—')}${TEL},
+
+ai l'honneur de solliciter la délivrance d'une Carte Nationale d'Identité.
+
+ÉTAT CIVIL DU DEMANDEUR :
+  - Nom et Prénom      : ${NOM}
+  - Date de naissance  : ${fmtDateShort(d['date-naiss'])}
+  - Lieu de naissance  : ${or(d['lieu-naiss'], LIEU)}
+  - Père               : ${or(d.pere, '—')}
+  - Mère               : ${or(d.mere, '—')}
+  - Adresse            : ${or(d.adresse, LIEU)}
+  - Profession         : ${or(d.profession, '—')}
+  - Nationalité        : Malienne
+${COMP}
+
+Je m'engage à fournir tous les documents requis (extrait d'acte de naissance, certificat de résidence, photos d'identité) et à me présenter en personne pour les formalités biométriques.
+
+Veuillez agréer, Monsieur le Commissaire, l'expression de mes respectueuses salutations.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La demandeur(se)`,
+
+    /* 3. DÉCLARATION DE PERTE */
+    declaration_perte: () => `Monsieur le Commissaire de Police de ${LIEU},
+
+Je soussigné(e) ${NOM}, demeurant à ${LIEU}${TEL},
+
+déclare solennellement avoir perdu le document suivant :
+
+DOCUMENT PERDU :
+  - Nature du document : ${or(d['doc-perdu'], '—')}
+  - Numéro / Référence : ${or(d['num-doc'], 'Non connu')}
+  - Date de la perte   : ${fmtDateShort(d['date-perte'])}
+  - Lieu de la perte   : ${or(d['lieu-perte'], LIEU)}
+
+CIRCONSTANCES DE LA PERTE :
+  ${or(d.circonstances, 'Le document a été perdu dans des circonstances indépendantes de ma volonté.')}
+${COMP}
+
+Je certifie sur l'honneur que les informations ci-dessus sont exactes et sincères. Je déclare n'avoir fait aucun usage frauduleux de ce document et m'engage à le restituer aux autorités compétentes s'il venait à être retrouvé.
+
+Je sollicite un procès-verbal de déclaration de perte aux fins de remplacement dudit document.
+
+Veuillez agréer, Monsieur le Commissaire, l'expression de mes respectueuses salutations.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La déclarant(e)`,
+
+    /* 4. PASSEPORT */
+    passeport: () => `Monsieur le Directeur de la Direction Générale de la Police Nationale,
+Service des Passeports,
+
+Je soussigné(e) ${NOM}, né(e) le ${fmtDateShort(d['date-naiss'])} à ${or(d['lieu-naiss'], LIEU)},
+de nationalité malienne, demeurant à ${or(d.adresse, LIEU)}${TEL},
+
+ai l'honneur de solliciter la délivrance d'un passeport ordinaire malien.
+
+INFORMATIONS PERSONNELLES :
+  - Nom et Prénom      : ${NOM}
+  - Date de naissance  : ${fmtDateShort(d['date-naiss'])}
+  - Lieu de naissance  : ${or(d['lieu-naiss'], LIEU)}
+  - Adresse            : ${or(d.adresse, LIEU)}
+  - Destination        : ${or(d.destination, '—')}
+  - Motif du voyage    : ${or(d.motif, '—')}
+  - Garant (si applicable) : ${or(d.garant, 'Sans objet')}
+${COMP}
+
+Je certifie l'exactitude des renseignements fournis et m'engage à respecter les lois et règlements en vigueur relatifs aux voyages à l'étranger.
+
+Veuillez agréer, Monsieur le Directeur, l'expression de ma haute considération.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La demandeur(se)`,
+
+    /* 5. ATTESTATION DE DOMICILE */
+    domicile: () => `ATTESTATION DE DOMICILE
+
+Je soussigné(e) ${or(d.proprietaire, NOM)}, ${d.proprietaire && d.proprietaire !== d.nom ? 'propriétaire / chef de famille, ' : ''}demeurant à ${or(d.adresse, LIEU)}, Commune de ${or(d.commune, LIEU)},
+
+atteste par la présente que Monsieur / Madame ${NOM} réside effectivement à l'adresse suivante :
+
+  Adresse : ${or(d.adresse, LIEU)}
+  Commune : ${or(d.commune, LIEU)}
+  Durée de résidence : ${or(d.duree, '—')}
+  Téléphone : ${or(d.tel, '—')}
+
+Cette attestation est établie à la demande de l'intéressé(e) pour servir et valoir ce que de droit, notamment pour : ${or(d.motif, 'usage administratif')}.${COMP}
+
+Je certifie sur l'honneur l'exactitude des informations contenues dans la présente attestation et m'engage à en répondre devant les autorités compétentes.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La soussigné(e)`,
+
+    /* 6. CONTRAT DE BAIL */
+    bail: () => `CONTRAT DE BAIL LOCATIF
+
+ENTRE LES SOUSSIGNÉS :
+
+BAILLEUR : ${or(d.bailleur, '—')}, ci-après désigné « le Bailleur »
+
+LOCATAIRE : ${or(d.locataire || NOM, '—')}, ci-après désigné « le Locataire »
+
+IL A ÉTÉ CONVENU CE QUI SUIT :
+
+ARTICLE 1 — OBJET DU BAIL
+Le Bailleur donne en location au Locataire le bien suivant :
+  Description : ${or(d.bien, '—')}
+  Adresse     : ${or(d.adresse, LIEU)}
+
+ARTICLE 2 — DURÉE
+Le présent bail est conclu pour une durée de ${or(d.duree, '—')}, prenant effet le ${fmtDateShort(d['date-debut'])}.
+
+ARTICLE 3 — LOYER
+Le loyer mensuel est fixé à ${or(d.loyer, '—')} FCFA, payable d'avance au plus tard le 5 de chaque mois.
+
+ARTICLE 4 — OBLIGATIONS DU LOCATAIRE
+Le Locataire s'engage à :
+  - Payer le loyer aux échéances convenues
+  - Entretenir les lieux en bon état
+  - Ne pas sous-louer sans l'accord écrit du Bailleur
+  - Respecter le voisinage et le règlement intérieur
+  - Restituer les lieux en bon état à la fin du bail
+
+ARTICLE 5 — RÉSILIATION
+Toute résiliation doit être notifiée par écrit avec un préavis d'un (1) mois.${COMP}
+
+Fait à ${LIEU}, le ${DATE}, en deux (2) exemplaires originaux.
+
+Le Bailleur                                    Le Locataire
+${or(d.bailleur, '—')}                         ${or(d.locataire || NOM, '—')}`,
+
+    /* 7. CONNEXION INTERNET */
+    connexion: () => `Monsieur le Directeur Commercial,
+${or(d.operateur, 'Opérateur de télécommunications')} — ${LIEU},
+
+Je soussigné(e) ${NOM}, demeurant à ${or(d.adresse, LIEU)}${TEL},
+
+ai l'honneur de solliciter auprès de votre service une connexion internet aux conditions suivantes :
+
+DÉTAILS DE LA DEMANDE :
+  - Type de connexion   : ${or(d['type-conn'], '—')}
+  - Adresse d'installation : ${or(d.adresse, LIEU)}
+  - Durée souhaitée     : ${or(d.duree, '—')}
+  - Usage principal     : ${or(d.usage, '—')}
+  - Opérateur visé      : ${or(d.operateur, '—')}
+${COMP}
+
+Je m'engage à respecter les conditions générales d'utilisation de vos services et à effectuer le paiement selon les modalités convenues.
+
+Dans l'attente d'une réponse favorable, je vous prie d'agréer, Monsieur le Directeur, l'expression de ma haute considération.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La demandeur(se)`,
+
+    /* 8. RÉCLAMATION */
+    reclamation: () => `Monsieur le Directeur,
+${or(d.service, 'Service Public')} — ${LIEU},
+
+Je soussigné(e) ${NOM}, abonné(e) N° ${or(d['num-contrat'], '—')},
+demeurant à ${LIEU}${TEL},
+
+ai l'honneur de porter à votre connaissance les désagréments que je subis en rapport avec vos services.
+
+OBJET DE LA RÉCLAMATION :
+  Service concerné : ${or(d.service, '—')}
+  N° contrat/abonné : ${or(d['num-contrat'], '—')}
+  Problème constaté depuis : ${or(d.depuis, '—')}
+
+DESCRIPTION DU PROBLÈME :
+  ${or(d.probleme, '—')}
+
+CE QUE JE DEMANDE :
+  ${or(d.demande, 'Une intervention rapide pour résoudre le problème.')}
+${COMP}
+
+Je vous rappelle que cette situation me cause un préjudice important et j'espère une intervention rapide de votre part dans les meilleurs délais.
+
+Dans l'attente de votre diligence, veuillez agréer, Monsieur le Directeur, l'expression de ma considération distinguée.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La réclamant(e)`,
+
+    /* 9. CERTIFICAT DE TRAVAIL */
+    certificat_travail: () => `CERTIFICAT DE TRAVAIL
+
+Je soussigné(e), représentant légal de ${or(d.employeur, '—')}, certifie par la présente que :
+
+Monsieur / Madame ${NOM} a été employé(e) dans notre structure aux conditions suivantes :
+
+  - Poste occupé          : ${or(d.poste, '—')}
+  - Date de début d'emploi : ${fmtDateShort(d['date-debut'])}
+  ${d['date-fin'] ? `- Date de fin d'emploi   : ${fmtDateShort(d['date-fin'])}` : `- Statut                : Employé(e) actuel(le)`}
+  - Salaire mensuel net   : ${or(d.salaire, '—')} FCFA
+
+Ce certificat est délivré à la demande de l'intéressé(e) pour servir et valoir ce que de droit, notamment pour : ${or(d.motif, 'usage administratif')}.${COMP}
+
+Nous attestons que l'intéressé(e) a accompli ses fonctions avec sérieux et professionnalisme pendant toute la durée de son emploi.
+
+Fait à ${LIEU}, le ${DATE}
+
+L'Employeur
+${or(d.employeur, '—')}`,
+
+    /* 10. BONNE VIE ET MŒURS */
+    bonne_vie: () => `CERTIFICAT DE BONNE VIE ET MŒURS
+
+Nous, soussignés :
+  - ${or(d.temoin1, 'Témoin 1')}
+  - ${or(d.temoin2, 'Témoin 2')}
+
+certifions par la présente que Monsieur / Madame ${NOM},
+né(e) le ${fmtDateShort(d['date-naiss'])} à ${or(d['lieu-naiss'], LIEU)},
+exerçant la profession de ${or(d.profession, '—')},
+demeurant à ${or(d.adresse, LIEU)},
+
+est une personne de bonne vie et mœurs, de bonne moralité et de bonne conduite habituelle.
+
+À notre connaissance, l'intéressé(e) n'a jamais été impliqué(e) dans des affaires judiciaires ou des comportements contraires à l'ordre public et aux bonnes mœurs.
+
+Ce certificat est établi à la demande de l'intéressé(e) pour servir et valoir ce que de droit, notamment pour : ${or(d.motif, 'usage administratif')}.
+${COMP}
+
+Fait sous serment à ${LIEU}, le ${DATE}
+
+Les témoins
+${or(d.temoin1, '—')}                              ${or(d.temoin2, '—')}`,
+
+    /* 11. DEMANDE D'EMPLOI */
+    demande_emploi: () => `${LIEU}, le ${DATE}
+
+${NOM}
+${or(d.adresse, LIEU)}
+${TEL.trim()}
+
+À Monsieur le Directeur des Ressources Humaines,
+${or(d.entreprise, '—')}
+${LIEU}
+
+Objet : Candidature au poste de ${or(d.poste, '—')}
+
+Monsieur le Directeur,
+
+Permettez-moi de vous adresser ma candidature au poste de ${or(d.poste, '—')} au sein de votre estimable organisation.
+
+Fort(e) d'une expérience de ${or(d.experience, '—')}, j'ai acquis les compétences nécessaires pour contribuer efficacement à vos objectifs :
+
+${or(d.competences, '—')}
+
+Ma formation de ${or(d.formation, '—')} m'a permis de développer une expertise solide dans ce domaine.
+
+Motivé(e) et disponible immédiatement, je suis convaincu(e) de pouvoir apporter une contribution significative à votre équipe.
+${COMP}
+
+Dans l'espoir d'une réponse favorable, je vous prie d'agréer, Monsieur le Directeur, l'expression de mes respectueuses salutations.
+
+${NOM}`,
+
+    /* 12. CV */
+    cv: () => `════════════════════════════════════════
+CURRICULUM VITAE
+════════════════════════════════════════
+
+INFORMATIONS PERSONNELLES
+─────────────────────────
+Nom & Prénom    : ${NOM}
+Date naissance  : ${fmtDateShort(d['date-naiss'])}
+Adresse         : ${or(d.adresse, LIEU)}
+Téléphone       : ${or(d.tel, '—')}
+Email           : ${or(d.email, '—')}
+Nationalité     : Malienne
+
+FORMATIONS
+──────────
+${or(d.formation, '—')}
+
+EXPÉRIENCES PROFESSIONNELLES
+─────────────────────────────
+${or(d.experience, '—')}
+
+COMPÉTENCES
+───────────
+${or(d.competences, '—')}
+
+LANGUES
+───────
+${or(d.langues, 'Français, Bambara')}
+${COMP}
+
+════════════════════════════════════════
+Document établi à ${LIEU}, le ${DATE}`,
+
+    /* 13. ATTESTATION DE VENTE */
+    vente: () => `ATTESTATION DE VENTE
+
+Entre les soussignés :
+
+VENDEUR : ${or(d.vendeur, '—')}, ci-après désigné « le Vendeur »
+
+ACHETEUR : ${or(d.acheteur || NOM, '—')}, ci-après désigné « l'Acheteur »
+
+IL A ÉTÉ CONVENU CE QUI SUIT :
+
+ARTICLE 1 — OBJET DE LA VENTE
+Le Vendeur cède et transfère à l'Acheteur la pleine propriété de :
+  ${or(d.objet, '—')}
+
+Description détaillée : ${or(d['desc-objet'], '—')}
+
+ARTICLE 2 — PRIX
+La vente est consentie et acceptée moyennant la somme de ${or(d.prix, '—')} FCFA
+(${or(d.prix, 'montant en lettres')} Francs CFA), payée comptant ce jour dont quittance.
+
+ARTICLE 3 — GARANTIES
+Le Vendeur garantit être le seul et unique propriétaire du bien vendu, libre de tout engagement, dette ou hypothèque.
+
+ARTICLE 4 — TRANSFERT DE PROPRIÉTÉ
+Le transfert de propriété est effectif à compter de la date de signature du présent acte.
+${COMP}
+
+Fait à ${LIEU}, le ${DATE}, en deux (2) exemplaires originaux.
+
+Le Vendeur                                     L'Acheteur
+${or(d.vendeur, '—')}                          ${or(d.acheteur || NOM, '—')}`,
+
+    /* 14. PROCURATION */
+    procuration: () => `LETTRE DE PROCURATION
+
+Je soussigné(e) ${NOM}, demeurant à ${LIEU}${TEL},
+
+donne par la présente procuration à :
+
+MANDATAIRE : ${or(d.mandataire, '—')}
+Lien        : ${or(d.lien, '—')}
+
+les pouvoirs de me représenter valablement auprès de :
+  ${or(d.institution, '—')}
+
+à l'effet de :
+  ${or(d.pouvoirs, '—')}
+
+Cette procuration est consentie pour une durée de : ${or(d.duree, '—')}
+
+Le mandataire aura tous les pouvoirs nécessaires pour accomplir les actes sus-mentionnés et signer tout document y relatif en mon nom et pour mon compte.
+${COMP}
+
+Je certifie sur l'honneur que la présente procuration est établie librement et en toute connaissance de cause.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La mandant(e)
+${NOM}`,
+
+    /* 15. RETRAIT DE PLAINTE */
+    retrait_plainte: () => `Monsieur le Commissaire / Monsieur le Président,
+${or(d.commissariat, '—')},
+
+Je soussigné(e) ${NOM}, demeurant à ${LIEU}${TEL},
+
+ai l'honneur de vous informer de ma décision de retirer la plainte que j'avais déposée contre :
+
+Personne mise en cause : ${or(d['mis-en-cause'], '—')}
+Référence de l'affaire : ${or(d['ref-affaire'], 'Non disponible')}
+
+MOTIF DU RETRAIT :
+${or(d.motif, 'Après réflexion et concertation entre les parties, nous sommes parvenus à un accord amiable satisfaisant pour toutes les parties concernées.')}
+${COMP}
+
+Je déclare agir librement et en toute connaissance de cause, sans contrainte ni pression d'aucune sorte. Je confirme que ce retrait de plainte est définitif et irrévocable.
+
+Je vous prie de bien vouloir classer sans suite cette affaire et d'en prendre bonne note.
+
+Veuillez agréer, Monsieur le Commissaire, l'expression de ma haute considération.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La plaignant(e)`,
+
+    /* 16. LETTRE DE MOTIVATION */
+    lettre_motivation: () => `${LIEU}, le ${DATE}
+
+${NOM}
+${or(d.adresse, LIEU)}
+${TEL.trim()}
+
+À Monsieur le Directeur des Ressources Humaines,
+${or(d.entreprise, '—')}
+${LIEU}
+
+Objet : Lettre de motivation — Poste de ${or(d.poste, '—')}
+
+Monsieur le Directeur,
+
+C'est avec un vif intérêt que je vous soumets ma candidature pour le poste de ${or(d.poste, '—')} au sein de ${or(d.entreprise, 'votre estimable structure')}.
+
+MA MOTIVATION :
+${or(d.motivation, 'Votre organisation représente pour moi une opportunité exceptionnelle d\'évoluer dans un environnement dynamique et stimulant.')}
+
+MES POINTS FORTS :
+${or(d.competences, '—')}
+
+MON PARCOURS :
+${or(d.experience, '—')}
+${COMP}
+
+Convaincu(e) que mon profil correspond pleinement aux attentes de votre structure, je reste à votre entière disposition pour un entretien à votre convenance.
+
+Dans l'espoir que ma candidature retiendra votre bienveillante attention, veuillez agréer, Monsieur le Directeur, l'expression de mes respectueuses salutations.
+
+${NOM}`,
+
+    /* 17. AIDE SOCIALE */
+    aide_sociale: () => `Monsieur le Directeur,
+Service Social Compétent de ${LIEU},
+
+Je soussigné(e) ${NOM}, demeurant à ${LIEU}${TEL},
+
+ai l'honneur de solliciter votre bienveillante attention sur ma situation et de vous adresser la présente demande d'aide sociale.
+
+SITUATION PERSONNELLE :
+  - Situation familiale  : ${or(d.situation, '—')}
+  - Revenus mensuels     : ${or(d.revenus, '0')} FCFA
+  - Charges principales  : ${or(d.charges, '—')}
+
+TYPE D'AIDE SOLLICITÉE :
+  ${or(d['type-aide'], '—')}
+
+JUSTIFICATION :
+  ${or(d.justification, 'Ma situation financière précaire ne me permet pas de faire face à mes obligations essentielles sans une aide extérieure.')}
+${COMP}
+
+Je certifie sur l'honneur l'exactitude des informations fournies et m'engage à signaler tout changement de situation.
+
+Confiant(e) en votre compréhension et en votre soutien, je vous prie d'agréer, Monsieur le Directeur, l'expression de ma haute considération.
+
+Fait à ${LIEU}, le ${DATE}
+
+Le/La demandeur(se)`
+
+  }; /* fin templates */
+
+  const fn = templates[type];
+  if (!fn) throw new Error('Modèle de document introuvable pour : ' + type);
+  return fn();
+}
+
+/* ════════════════════════════════════════════
+   ACTIONS : Imprimer, Sauvegarder, WhatsApp
+════════════════════════════════════════════ */
+function printDoc() {
+  if (!generatedContent) return;
+  window.print();
+}
+
+function saveToHistory() {
+  if (!generatedContent) return;
+  const hist = JSON.parse(localStorage.getItem('samassa_docs_admin') || '[]');
+  hist.push(generatedContent);
+  localStorage.setItem('samassa_docs_admin', JSON.stringify(hist));
+  loadStats();
+  renderHistorique();
+  /* Toast */
+  const t = document.createElement('div');
+  t.className = 'toast-doc success';
+  t.textContent = '💾 Document enregistré ✓';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+function shareWhatsApp() {
+  if (!generatedContent) return;
+  const msg = `*SAMASSA TECHNOLOGIE*\n_Cyber Café — Grand Marché de Kayes_\n\n📝 *Document généré : ${generatedContent.title}*\nRéférence : ${generatedContent.refNum}\nClient : ${generatedContent.nom}\nDate : ${new Date(generatedContent.timestamp).toLocaleDateString('fr-FR')}\n\nDocument disponible à imprimer chez SAMASSA TECHNOLOGIE.\n📞 77 29 19 31`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ════════════════════════════════════════════
+   HISTORIQUE
+════════════════════════════════════════════ */
+function renderHistorique() {
+  const hist = JSON.parse(localStorage.getItem('samassa_docs_admin') || '[]');
+  const container = document.getElementById('hist-list');
+  if (!hist.length) {
+    container.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text3)"><div style="font-size:32px;opacity:.25;margin-bottom:8px">📂</div><p style="font-size:13px">Aucun document généré</p></div>';
+    return;
+  }
+  container.innerHTML = [...hist].reverse().map((d, idx) => {
+    const realIdx = hist.length - 1 - idx;
+    const cfg = DOC_CONFIG[d.type];
+    const date = d.timestamp ? new Date(d.timestamp).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+    return `<div class="hist-item">
+      <div class="hist-ico">${cfg?.icon || '📝'}</div>
+      <div class="hist-info">
+        <div class="hist-type">${d.title}</div>
+        <div class="hist-client">👤 ${d.nom}</div>
+      </div>
+      <div class="hist-meta">
+        <div class="hist-num">${d.refNum}</div>
+        <div class="hist-date">${date}</div>
+        <button class="hist-reprint" onclick="reprintDoc(${realIdx})">🖨️ Réimprimer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function reprintDoc(idx) {
+  const hist = JSON.parse(localStorage.getItem('samassa_docs_admin') || '[]');
+  const d = hist[idx];
+  if (!d) return;
+  const cfg = DOC_CONFIG[d.type];
+  document.getElementById('d-title').textContent = d.title;
+  document.getElementById('d-ref-num').textContent = d.refNum;
+  document.getElementById('d-ref-date').textContent = new Date(d.timestamp).toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('d-body').textContent = d.text;
+  document.getElementById('preview-placeholder').style.display = 'none';
+  document.getElementById('doc-a4-content').style.display = 'block';
+  document.getElementById('preview-actions').style.display = 'flex';
+  generatedContent = d;
+  switchTab('creer');
+  setTimeout(() => document.getElementById('doc-a4-content').scrollIntoView({ behavior:'smooth', block:'start' }), 200);
+}
+
+function clearDocHistory() {
+  if (!confirm('Effacer tout l\'historique des documents générés ?')) return;
+  localStorage.removeItem('samassa_docs_admin');
+  localStorage.removeItem('samassa_docs_counter');
+  docCounter = 0;
+  loadStats();
+  renderHistorique();
+}
+</script>
+
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("service-worker.js");</script>
+</body>
+</html>

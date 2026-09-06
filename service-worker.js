@@ -35,6 +35,8 @@ const STATIC_ASSETS = [
   'docs_admin.html',
   'stock.html',
   'stock.js',
+  'bon_reparation.html',
+  'bon_reparation.js',
   'qrcode.min.js',
   'manifest.json',
   'logo.png',

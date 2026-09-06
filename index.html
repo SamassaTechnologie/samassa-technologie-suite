@@ -475,6 +475,10 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,13
       <span class="sb-item-icon">📦</span>
       <span class="sb-item-label">Gestion de stock</span>
     </a>
+    <a href="bon_reparation.html" class="sb-item">
+      <span class="sb-item-icon">🔧</span>
+      <span class="sb-item-label">Bon de réparation</span>
+    </a>
     <a href="intervention.html" class="sb-item">
       <span class="sb-item-icon">🔧</span>
       <span class="sb-item-label">Fiche d'Intervention</span>
@@ -607,6 +611,7 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,13
     <a href="facture_materiel.html"  class="qa"><div class="qa-icon" style="background:#EBF5FF">🖥️</div><div class="qa-label">Facture Matériel</div></a>
     <a href="recu_vente.html"         class="qa"><div class="qa-icon" style="background:#F0FDFA">🧾</div><div class="qa-label">Reçu Vente</div></a>
     <a href="stock.html"               class="qa"><div class="qa-icon" style="background:#FFF7ED">📦</div><div class="qa-label">Stock</div></a>
+    <a href="bon_reparation.html"      class="qa"><div class="qa-icon" style="background:#F5F3FF">🔧</div><div class="qa-label">Bon Réparation</div></a>
     <a href="recu_cyber.html"        class="qa"><div class="qa-icon" style="background:#EEF2FF">☕</div><div class="qa-label">Reçu Cyber</div></a>
     <a href="intervention.html"      class="qa"><div class="qa-icon" style="background:var(--purple-bg)">🔧</div><div class="qa-label">Intervention</div></a>
     <a href="devis.html"             class="qa"><div class="qa-icon" style="background:var(--amber-bg)">📋</div><div class="qa-label">Devis</div></a>
@@ -968,6 +973,7 @@ function buildActivity() {
     {k:'samassa_recus',i:'🧾',l:'Reçu',c:'#16A34A'},
     {k:'samassa_factures',i:'📄',l:'Facture',c:'#0088CC'},
     {k:'samassa_factures_mat',i:'🖥️',l:'Facture Matériel',c:'#0070C0'},
+    {k:'samassa_bons_reparation',i:'🔧',l:'Bon Réparation',c:'#7C3AED'},
     {k:'samassa_interventions',i:'🔧',l:'Intervention',c:'#7C3AED'},
     {k:'samassa_devis',i:'📋',l:'Devis',c:'#D97706'},
     {k:'samassa_recus_cyber',i:'🖥️',l:'Reçu Cyber',c:'#16A34A'},
@@ -1017,13 +1023,14 @@ function loadStats() {
   const recusVente=getData('samassa_recus_vente');
   const devis=getData('samassa_devis');
   const interventions=getData('samassa_interventions');
+  const bonsReparation=getData('samassa_bons_reparation');
   const mouvements=getData('samassa_mouvements');
   const retraits=getData('samassa_retraits');
 
   /* Documents */
-  const totalDocs=factures.length+facturesMat.length+facturesCyber.length+devis.length+interventions.length;
+  const totalDocs=factures.length+facturesMat.length+facturesCyber.length+devis.length+interventions.length+bonsReparation.length;
   if($('kpi-factures'))$('kpi-factures').textContent=totalDocs;
-  if($('kpi-docs-sub'))$('kpi-docs-sub').textContent=`Factures: ${factures.length+facturesMat.length+facturesCyber.length} · Devis: ${devis.length}`;
+  if($('kpi-docs-sub'))$('kpi-docs-sub').textContent=`Factures: ${factures.length+facturesMat.length+facturesCyber.length} · Devis: ${devis.length} · Réparations: ${bonsReparation.length}`;
 
   /* Reçus */
   const totalRec=recus.length+recusCyber.length+recusVente.length;
@@ -1144,7 +1151,7 @@ function exportRetraits(){const list=getData('samassa_retraits');if(!list.length
 /* ══ HISTORIQUE ══ */
 function renderHistory(){
   const typeFilter=$('h-type')?.value||'',search=($('h-search')?.value||'').toLowerCase();
-  const types=[{key:'samassa_factures',cls:'di-f',icon:'📄',label:'Facture',url:'facture.html'},{key:'samassa_factures_mat',cls:'di-f',icon:'🖥️',label:'Facture Matériel',url:'facture_materiel.html'},{key:'samassa_recus',cls:'di-r',icon:'🧾',label:'Reçu NINA',url:'recu.html'},{key:'samassa_recus_vente',cls:'di-r',icon:'🧾',label:'Reçu Vente',url:'recu_vente.html'},{key:'samassa_devis',cls:'di-d',icon:'📋',label:'Devis',url:'devis.html'},{key:'samassa_interventions',cls:'di-i',icon:'🔧',label:'Intervention',url:'intervention.html'},{key:'samassa_recus_cyber',cls:'di-r',icon:'🖥️',label:'Reçu Cyber',url:'recu_cyber.html'},{key:'samassa_factures_cyber',cls:'di-f',icon:'🖥️',label:'Facture Cyber',url:'facture_cyber.html'}];
+  const types=[{key:'samassa_factures',cls:'di-f',icon:'📄',label:'Facture',url:'facture.html'},{key:'samassa_factures_mat',cls:'di-f',icon:'🖥️',label:'Facture Matériel',url:'facture_materiel.html'},{key:'samassa_recus',cls:'di-r',icon:'🧾',label:'Reçu NINA',url:'recu.html'},{key:'samassa_recus_vente',cls:'di-r',icon:'🧾',label:'Reçu Vente',url:'recu_vente.html'},{key:'samassa_bons_reparation',cls:'di-i',icon:'🔧',label:'Bon Réparation',url:'bon_reparation.html'},{key:'samassa_devis',cls:'di-d',icon:'📋',label:'Devis',url:'devis.html'},{key:'samassa_interventions',cls:'di-i',icon:'🔧',label:'Intervention',url:'intervention.html'},{key:'samassa_recus_cyber',cls:'di-r',icon:'🖥️',label:'Reçu Cyber',url:'recu_cyber.html'},{key:'samassa_factures_cyber',cls:'di-f',icon:'🖥️',label:'Facture Cyber',url:'facture_cyber.html'}];
   let all=[];
   (typeFilter?types.filter(t=>t.key===typeFilter):types).forEach(t=>getData(t.key).forEach(d=>all.push({...d,_t:t})));
   if(search)all=all.filter(d=>(d.client||'').toLowerCase().includes(search)||(d.number||'').toLowerCase().includes(search));
@@ -1167,7 +1174,7 @@ function searchDocs(){
   const q=($('search-input')?.value||'').toLowerCase().trim();
   const sr=$('search-results');
   if(!q){sr.style.display='none';return;}
-  const types=[{k:'samassa_recus',i:'🧾',l:'Reçu'},{k:'samassa_factures',i:'📄',l:'Facture'},{k:'samassa_recus_cyber',i:'🖥️',l:'Reçu Cyber'},{k:'samassa_factures_cyber',i:'🖥️',l:'Facture Cyber'},{k:'samassa_interventions',i:'🔧',l:'Intervention'},{k:'samassa_devis',i:'📋',l:'Devis'}];
+  const types=[{k:'samassa_recus',i:'🧾',l:'Reçu'},{k:'samassa_recus_vente',i:'🧾',l:'Reçu Vente'},{k:'samassa_factures',i:'📄',l:'Facture'},{k:'samassa_recus_cyber',i:'🖥️',l:'Reçu Cyber'},{k:'samassa_factures_cyber',i:'🖥️',l:'Facture Cyber'},{k:'samassa_bons_reparation',i:'🔧',l:'Bon Réparation'},{k:'samassa_interventions',i:'🔧',l:'Intervention'},{k:'samassa_devis',i:'📋',l:'Devis'}];
   let all=[];types.forEach(t=>getData(t.k).forEach(d=>all.push({...d,_t:t})));
   const results=all.filter(d=>(d.client||'').toLowerCase().includes(q)||(d.number||'').toLowerCase().includes(q)||(d.phone||'').toLowerCase().includes(q)).slice(0,8);
   if(!results.length){sr.style.display='none';return;}

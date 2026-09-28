@@ -13,6 +13,9 @@
   var _video     = null;
   var _onResult  = null;
   var _active    = false;
+  var _scanBusy  = false;
+  var _lastScan  = 0;
+  var _barcodeDetector = null;
 
   /* ── Ouvrir le scanner ── */
   window.openNinaScanner = function (targetFieldId, onSuccess) {
@@ -40,13 +43,28 @@
     if (modal) modal.style.display = 'none';
   };
 
+  window.retryNinaScanner = function () {
+    _stopCamera();
+    _active = true;
+    var error = document.getElementById('qr-cam-error');
+    var wrap = document.getElementById('qr-video-wrap');
+    if (error) error.style.display = 'none';
+    if (wrap) wrap.style.display = 'flex';
+    _startCamera();
+  };
+
   /* ── Démarrer la caméra arrière ── */
   function _startCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      _showCameraError('La caméra nécessite une connexion HTTPS et un navigateur compatible.');
+      return;
+    }
     var constraints = {
       video: {
         facingMode: { ideal: 'environment' }, // caméra arrière
-        width:  { ideal: 1280 },
-        height: { ideal: 720 }
+        width:  { ideal: 1920, min: 640 },
+        height: { ideal: 1080, min: 480 },
+        focusMode: { ideal: 'continuous' }
       }
     };
 
@@ -56,19 +74,39 @@
         _video  = document.getElementById('qr-video');
         _video.srcObject = stream;
         _video.setAttribute('playsinline', true);
-        _video.play();
-        _video.addEventListener('loadedmetadata', function () {
+        _video.play().catch(function () {});
+        _video.onloadedmetadata = function () {
           _setupCanvas();
+          var track = stream.getVideoTracks()[0];
+          try {
+            var caps = track.getCapabilities ? track.getCapabilities() : {};
+            if (caps.focusMode && caps.focusMode.includes('continuous')) {
+              track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(function () {});
+            }
+          } catch (e) {}
           _scanLoop();
-        });
+        };
         document.getElementById('qr-cam-error').style.display = 'none';
         document.getElementById('qr-video-wrap').style.display = 'block';
       })
       .catch(function (err) {
         console.warn('Caméra:', err);
-        document.getElementById('qr-cam-error').style.display = 'flex';
+        var msg = err && err.name === 'NotAllowedError'
+          ? 'Autorisez l’accès à la caméra dans les paramètres du navigateur puis réessayez.'
+          : err && err.name === 'NotFoundError'
+            ? 'Aucune caméra compatible n’a été trouvée sur cet appareil.'
+            : 'Impossible d’ouvrir la caméra. Vérifiez les permissions et réessayez.';
+        _showCameraError(msg);
         document.getElementById('qr-video-wrap').style.display = 'none';
       });
+  }
+
+  function _showCameraError(message) {
+    var box = document.getElementById('qr-cam-error');
+    if (!box) return;
+    var text = box.querySelector('.qr-camera-error-text');
+    if (text) text.textContent = message;
+    box.style.display = 'flex';
   }
 
   /* ── Arrêter la caméra ── */
@@ -79,43 +117,63 @@
       _stream = null;
     }
     if (_video) { _video.srcObject = null; }
+    _scanBusy = false;
+    _barcodeDetector = null;
   }
 
   /* ── Préparer le canvas de détection ── */
   function _setupCanvas() {
     _canvas = document.getElementById('qr-canvas');
-    _ctx    = _canvas.getContext('2d');
-    _canvas.width  = _video.videoWidth;
-    _canvas.height = _video.videoHeight;
+    _ctx    = _canvas.getContext('2d', { willReadFrequently: true });
+    /* Le QR est placé dans le viseur central : traiter cette zone
+       améliore fortement la netteté et réduit la charge du téléphone. */
+    _canvas.width  = 640;
+    _canvas.height = 640;
+    try {
+      if ('BarcodeDetector' in window) _barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+    } catch (e) { _barcodeDetector = null; }
   }
 
   /* ── Boucle de scan ── */
   function _scanLoop() {
-    if (!_active || !_video || _video.readyState < 2) {
+    if (!_active) return;
+    if (!_video || _video.readyState < 2) {
       _animFrame = requestAnimationFrame(_scanLoop);
       return;
     }
 
-    // Dessiner la frame sur le canvas
-    _ctx.drawImage(_video, 0, 0, _canvas.width, _canvas.height);
+    var now = Date.now();
+    if (_scanBusy || now - _lastScan < 120) {
+      _animFrame = requestAnimationFrame(_scanLoop);
+      return;
+    }
+    _lastScan = now;
+    _scanBusy = true;
+
+    /* Recadrage carré au centre, correspondant au viseur affiché. */
+    var vw = _video.videoWidth, vh = _video.videoHeight;
+    var side = Math.min(vw, vh) * 0.72;
+    var sx = (vw - side) / 2, sy = (vh - side) / 2;
+    _ctx.drawImage(_video, sx, sy, side, side, 0, 0, _canvas.width, _canvas.height);
     var imageData = _ctx.getImageData(0, 0, _canvas.width, _canvas.height);
 
-    // 1. Essayer BarcodeDetector natif (Chrome Android, rapide)
-    if ('BarcodeDetector' in window) {
-      var detector = new BarcodeDetector({ formats: ['qr_code'] });
-      detector.detect(_video)
+    // 1. Détecteur natif réutilisé, sans le recréer à chaque image
+    if (_barcodeDetector) {
+      _barcodeDetector.detect(_canvas)
         .then(function (barcodes) {
           if (barcodes.length > 0) {
             _onDetected(barcodes[0].rawValue);
           } else {
+            _scanBusy = false;
             _animFrame = requestAnimationFrame(_scanLoop);
           }
         })
         .catch(function () {
+          _scanBusy = false;
           _scanWithJsQR(imageData);
         });
     } else {
-      // 2. Fallback jsQR
+      // 2. Fallback jsQR avec inversion automatique
       _scanWithJsQR(imageData);
     }
   }
@@ -123,15 +181,17 @@
   /* ── Fallback jsQR ── */
   function _scanWithJsQR(imageData) {
     if (typeof jsQR === 'undefined') {
+      _scanBusy = false;
       _animFrame = requestAnimationFrame(_scanLoop);
       return;
     }
     var code = jsQR(imageData.data, imageData.width, imageData.height, {
-      inversionAttempts: 'dontInvert'
+      inversionAttempts: 'attemptBoth'
     });
     if (code && code.data) {
       _onDetected(code.data);
     } else {
+      _scanBusy = false;
       _animFrame = requestAnimationFrame(_scanLoop);
     }
   }
@@ -199,6 +259,7 @@
     // 2. Pattern NINA malien (15 caractères alphanum commençant par chiffre/lettre)
     var ninaPattern = /\b([A-Z0-9]{10,20})\b/g;
     var matches = raw.match(ninaPattern);
+    if (matches && matches.length) result.nina = matches[0];
 
     // 3. Clés=valeurs (NINA=..., NOM=...)
     if (raw.includes('=')) {
@@ -235,7 +296,7 @@
     }
 
     // 5. Le QR entier est le NINA
-    result.nina = raw.trim().replace(/\s+/g, '');
+    result.nina = result.nina || raw.trim().replace(/\s+/g, '');
     return result;
   }
 
@@ -310,7 +371,8 @@
       '<div id="qr-cam-error" style="display:none;flex-direction:column;align-items:center;gap:14px;padding:30px;text-align:center">',
         '<div style="font-size:40px">🚫</div>',
         '<div style="color:white;font-size:14px;font-weight:600">Accès caméra refusé</div>',
-        '<div style="color:#7AB4D8;font-size:12px">Autorisez l\'accès à la caméra dans les paramètres du navigateur puis réessayez.</div>',
+        '<div class="qr-camera-error-text" style="color:#7AB4D8;font-size:12px">Autorisez l\'accès à la caméra dans les paramètres du navigateur puis réessayez.</div>',
+        '<button onclick="retryNinaScanner()" style="background:#059652;color:white;border:none;padding:11px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">↻ Réessayer</button>',
         '<button onclick="closeNinaScanner()" style="background:#0070C0;color:white;border:none;padding:11px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Fermer</button>',
       '</div>',
 

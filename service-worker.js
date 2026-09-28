@@ -37,6 +37,10 @@ const STATIC_ASSETS = [
   'stock.js',
   'bon_reparation.html',
   'bon_reparation.js',
+  'setup-firebase.html',
+  'scanner.js',
+  'jsqr.js',
+  'capacitor-plugins.js',
   'qrcode.min.js',
   'manifest.json',
   'logo.png',
@@ -78,7 +82,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
 
   /* Ignorer les requêtes non-GET et hors origine */
-  if (request.method !== 'GET' || !url.origin.includes(self.location.origin)) return;
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
   /* Assets statiques (CSS, JS, images) → Cache-First */
   const isAsset = /\.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?)$/i.test(url.pathname);

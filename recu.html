@@ -329,7 +329,7 @@
 <!-- Actualiser les sections si sync distante -->
 <script>
 document.addEventListener('samassa:sync', e => {
-  if (e.detail.key === 'samassa_recus') {
+  if (!e.detail?.key || e.detail.key === '*' || e.detail.key === 'samassa_recus') {
     renderPendingCards();
     renderDailyHistory();
   }

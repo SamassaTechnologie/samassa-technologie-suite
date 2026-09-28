@@ -213,7 +213,7 @@ const SyncEngine = {
     const anyNew = results.some(r => r.value === true);
     if (anyNew) {
       document.dispatchEvent(
-        new CustomEvent('samassa:sync', { detail: { merged: true } })
+        new CustomEvent('samassa:sync', { detail: { merged: true, key: '*' } })
       );
     }
   },

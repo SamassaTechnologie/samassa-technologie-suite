@@ -3,8 +3,8 @@
    Installable sur PC (Windows/Mac/Linux) ET téléphone
    Stratégie : Cache-First pour les assets, Network-First pour les pages
 ============================================================ */
-const CACHE_NAME   = 'samassa-pro-v3.6';
-const CACHE_PAGES  = 'samassa-pages-v3.6';
+const CACHE_NAME   = 'samassa-pro-v3.7';
+const CACHE_PAGES  = 'samassa-pages-v3.7';
 
 /* Fichiers mis en cache immédiatement à l'installation */
 const STATIC_ASSETS = [
